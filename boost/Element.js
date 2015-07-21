@@ -278,7 +278,7 @@ define(function (require, exports, module) {
             if (match !== null) {
                 if ((m = match[1])) {
                     // ID selector
-                    push.apply(results, this.getElementById(m));
+                    results.push(this.getElementById(m));
                 } else if (match[2]) {
                     // Type selector
                     push.apply(results, this.getElementsByTagName(selector));
@@ -296,20 +296,21 @@ define(function (require, exports, module) {
 
                     //过滤不满足条件的节点
                     var count = items.length;
-                    list.filter(function (element) {
+                    each(list, function (element) {
                         var index = count;
+                        var node = element;
                         while (index--) {
                             // 没有找到符合条件的父节点，就过滤掉
                             // FIXME 以当前节点作为根节点
-                            element = element.__parentSelect(items[index]);
-                            if (element === null) {
-                                return false;
+                            node = node.__parentSelect(items[index]);
+                            if (node === null) {
+                                //没有找到选择器指定的父节点
+                                return;
                             }
                         }
-                        return true;
+                        //在当前文档能找到符合条件的父节点，添加进结果集
+                        results.push(element);
                     });
-
-                    push.apply(results, list);
                 });
             }
             return results;

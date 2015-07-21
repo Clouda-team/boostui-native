@@ -50,6 +50,7 @@ define(function (require, exports, module) {
         updateView: NativeObject.bindNative("updateView"),
         addView: NativeObject.bindNative("addView"),
         removeView: NativeObject.bindNative("removeView"),
+        removeAllViews: NativeObject.bindNative("removeAllViews"),
 
         createAnimation: NativeObject.bindNative("createAnimation"),
         __destroy: NativeObject.bindNative("destroy"),
@@ -69,7 +70,27 @@ define(function (require, exports, module) {
         return null;
     };
 
-    //TODO Event
+
+    document.addEventListener("boost", function (e) {
+        var origin = e.origin;
+        var target = NativeObject.getByTag(origin);
+        var type = e.boostEventType.toLowerCase();
+        var event;
+        if (target) {
+            switch (type) {
+            case "touchstart":
+            case "touchend":
+                event = new TouchEvent(type, target, e.x, e.y);
+                target.dispatchEvent(event);
+                break;
+            default:
+                console.log(e);
+                return;
+            }
+
+        }
+    }, false);
+
     module.exports = NativeObject;
 
 });

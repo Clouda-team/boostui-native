@@ -1,6 +1,5 @@
-"use strict";
-
-define(function () {
+define(function (require, exports, module) {
+    "use strict";
 
     function genQueue(callback) {
         var running = false;
@@ -46,5 +45,5 @@ define(function () {
         };
     }
 
-    return genQueue;
+    module.exports = genQueue;
 });

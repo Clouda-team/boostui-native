@@ -98,13 +98,10 @@ define(function (require, exports, module) {
 
     function applyStyle() {
         each(ruleList, function (item) {
-            var selectorList = item.selector.split(",");
-            each(selectorList, function (selector) {
-                selector = trim(selector);
-                var elements = boost.querySelectorAll(selector);
-                each(elements, function (element) {
-                    copyProperties(element.style, item.rule);
-                });
+            var selector = item.selector;
+            var elements = boost.querySelectorAll(selector);
+            each(elements, function (element) {
+                copyProperties(element.style, item.rule);
             });
         });
     }

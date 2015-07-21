@@ -6,6 +6,8 @@ define(function (require, exports, module) {
     var EventTarget = require("boost/EventTarget");
     var StyleSheet = require("boost/StyleSheet");
     var trim = require("base/trim");
+    var each = require("base/each");
+    var push = [].push;
 
     var Element = derive(EventTarget, function (tag) {
         this._super();
@@ -102,6 +104,9 @@ define(function (require, exports, module) {
 
             return null;
         },
+        "get nodeType": function () {
+            return 1; //ELEMENT_NODE;
+        },
         __getStyle: function () {
             return new StyleSheet();
         },
@@ -160,7 +165,7 @@ define(function (require, exports, module) {
             oldChild.__parent__ = null;
             return oldChild;
         },
-        __findElement: function (callback) {
+        __findChild: function (callback) {
             var childNodes = this.childNodes;
             var index;
             var count = childNodes.length;
@@ -170,7 +175,7 @@ define(function (require, exports, module) {
                 if (callback(child) === true) {
                     return true;
                 }
-                if (child.__findElement(callback)) {
+                if (child.__findChild(callback)) {
                     return true;
                 }
             }
@@ -179,7 +184,7 @@ define(function (require, exports, module) {
         },
         getElementById: function (id) {
             var ret = null;
-            this.__findElement(function (element) {
+            this.__findChild(function (element) {
                 if (element.id === id) {
                     ret = element;
                     //如果找到指定 Element, 返回 true, 停止遍历
@@ -193,7 +198,7 @@ define(function (require, exports, module) {
         getElementsByClassName: function (className) {
             var ret = [];
 
-            this.__findElement(function (element) {
+            this.__findChild(function (element) {
                 if (element.classList.indexOf(className) > -1) {
                     ret.push(element);
                 }
@@ -207,7 +212,7 @@ define(function (require, exports, module) {
             tag = tag.toUpperCase();
             var ret = [];
 
-            this.__findElement(function (element) {
+            this.__findChild(function (element) {
                 if (element.tagName === tag) {
                     ret.push(element);
                 }
@@ -217,6 +222,101 @@ define(function (require, exports, module) {
 
             return ret;
         },
+        __findParent: function (callback) {
+            var node = this;
+            while ((node = node.parentNode) !== null) {
+                if (callback(node) === true) {
+                    return true;
+                }
+            }
+            return false;
+        },
+        __parentSelect: function (selector) {
+            var results = null;
+            var match = rquickExpr.exec(selector);
+            var m;
+
+            assert(match !== null, "现在只支持简单的选择器: #id .class tag");
+
+            if ((m = match[1])) {
+                // ID selector
+                this.__findParent(function (element) {
+                    if (element.id === m) {
+                        results = element;
+                        return true;
+                    }
+                });
+            } else if (match[2]) {
+                // Type selector
+                this.__findParent(function (element) {
+                    if (element.tagName === selector) {
+                        results = element;
+                        return true;
+                    }
+                });
+            } else if (m = match[3]) {
+                // Class selector
+                this.__findParent(function (element) {
+                    if (element.classList.indexOf(m) > -1) {
+                        results = element;
+                        return true;
+                    }
+                });
+            }
+            return results;
+        },
+        __select: function (selector, results) {
+            var self = this;
+            results = results || [];
+            selector = trim(selector);
+            if (!selector) {
+                return results;
+            }
+
+            var match = rquickExpr.exec(selector);
+            var m;
+            if (match !== null) {
+                if ((m = match[1])) {
+                    // ID selector
+                    push.apply(results, this.getElementById(m));
+                } else if (match[2]) {
+                    // Type selector
+                    push.apply(results, this.getElementsByTagName(selector));
+                } else if (m = match[3]) {
+                    // Class selector
+                    push.apply(results, this.getElementsByClassName(m));
+                }
+            } else {
+                each(selector.split(","), function (selector) {
+                    var items = selector.split(" ").filter(function (item) {
+                        return trim(item).length > 0;
+                    });
+                    //找出所有满足需求的
+                    var list = self.__select(items.pop());
+
+                    //过滤不满足条件的节点
+                    var count = items.length;
+                    list.filter(function (element) {
+                        var index = count;
+                        while (index--) {
+                            // 没有找到符合条件的父节点，就过滤掉
+                            // FIXME 以当前节点作为根节点
+                            element = element.__parentSelect(items[index]);
+                            if (element === null) {
+                                return false;
+                            }
+                        }
+                        return true;
+                    });
+
+                    push.apply(results, list);
+                });
+            }
+            return results;
+        },
+        querySelectorAll: function (selector) {
+            return this.__select(selector);
+        },
         /*
         querySelector: function (selector) {
             var func = getSelectorFunction(selector);
@@ -224,23 +324,30 @@ define(function (require, exports, module) {
             func(this, ret, 1);
             return ret;
         },
-       */
-        querySelectorAll: function (selector) {
+        querySelectorAll: function (selector, __results__) {
+            __results__ = __results__ || [];
             var match = rquickExpr.exec(selector);
             var m;
-            assert(match !== null, "现在只支持简单的选择器: #id .class tag");
 
-            if ((m = match[1])) {
-                // ID selector
-                return [this.getElementById(m)];
-            } else if (match[2]) {
-                // Type selector
-                return this.getElementsByTagName(selector);
-            } else if (m = match[3]) {
-                // Class selector
-                return this.getElementsByClassName(m);
+            //assert(match !== null, "现在只支持简单的选择器: #id .class tag");
+            if (match !== null) {
+                if ((m = match[1])) {
+                    // ID selector
+                    push.apply(__results__, this.getElementById(m));
+                } else if (match[2]) {
+                    // Type selector
+                    push.apply(__results__, this.getElementsByTagName(selector));
+                } else if (m = match[3]) {
+                    // Class selector
+                    push.apply(__results__, this.getElementsByTagName(selector));
+                }
+            } else {
+
             }
+
+            return __results__;
         },
+       */
         setAttribute: function (name, value) {
             switch (name.toLowerCase()) {
             case "class":

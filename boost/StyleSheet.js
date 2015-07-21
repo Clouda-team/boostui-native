@@ -1,6 +1,7 @@
 define(function (require, exports, module) {
     "use strict";
 
+    var DEVICE_PIXEL_RATIO = window.devicePixelRatio;
     var derive = require("base/derive");
     var trim = require("base/trim");
     var copyProperties = require("base/copyProperties");
@@ -16,10 +17,14 @@ define(function (require, exports, module) {
         this._super();
         this.__styleProps__ = {};
     }, {
+
+        //TODO
+        // 现在的 cssText 是 Native 的格式，需要转换
+        /*
         "get cssText": function () {
-            //TODO
             return JSON.stringify(this.__getProps());
         },
+       */
         "set cssText": function (value) {
             this.__styleProps__ = {};
             var list = String(value).split(";");
@@ -46,6 +51,7 @@ define(function (require, exports, module) {
             return chr ? chr.toUpperCase() : '';
         });
     }
+
 
     StyleSheet.createPropTypes = function ( /*base..., */ config) {
         var proto = {};
@@ -98,6 +104,12 @@ define(function (require, exports, module) {
                 return "assets:" + value;
             }
             return String(value);
+        },
+
+        dp: function (value) {
+            assert(!isNaN(value) && isFinite(value), "must be number");
+            value = parseFloat(value);
+            return value * DEVICE_PIXEL_RATIO;
         },
 
         number: function (value) {

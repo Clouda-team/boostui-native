@@ -7,17 +7,18 @@ define(function (require, exports, module) {
 
     var validator = StyleSheet.validator;
     var number = validator.number;
+    var dp = validator.dp;
     var string = validator.string;
     var color = validator.color;
     var _enum = validator.oneOf;
 
     var ViewStylePropTypes = StyleSheet.createPropTypes(LayoutPropTypes, {
         "backgroundColor": color, //
-        "borderRadius": number, //
-        "borderTopLeftRadius": number, //
-        "borderTopRightRadius": number, //
-        "borderBottomRightRadius": number, //
-        "borderBottomLeftRadius": number, //
+        "borderRadius": dp, //
+        "borderTopLeftRadius": dp, //
+        "borderTopRightRadius": dp, //
+        "borderBottomRightRadius": dp, //
+        "borderBottomLeftRadius": dp, //
         "borderColor": color, //
         "borderLeftColor": color, //
         "borderTopColor": color, //
@@ -27,11 +28,11 @@ define(function (require, exports, module) {
         "overflow": _enum('visible', 'hidden'), //
         //"shadowColor": color, //
         //"shadowOffset": { //
-        //    "width": number,
-        //    "height": number
+        //    "width": dp,
+        //    "height": dp
         //},
         //"shadowOpacity": number, //
-        //"shadowRadius": number, //}
+        //"shadowRadius": dp, //}
     });
 
     module.exports = ViewStylePropTypes;

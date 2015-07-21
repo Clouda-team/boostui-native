@@ -7,6 +7,7 @@ define(function (require, exports, module) {
 
     var validator = StyleSheet.validator;
     var number = validator.number;
+    var dp = validator.dp;
     var string = validator.string;
     var color = validator.color;
     var font = validator.font;
@@ -20,7 +21,7 @@ define(function (require, exports, module) {
         "fontStyle": _enum('normal', 'italic'),
         "fontWeight": _enum("normal", 'bold', '100', '200', '300', '400', '500', '600', '700', '800', '900'),
         "letterSpacing": number,
-        "lineHeight": number,
+        "lineHeight": dp,
         "textAlign": _enum("auto", 'left', 'right', 'center', 'justify'),
         //"textDecorationColor": string,
         //"textDecorationLine": _enum("none", 'underline', 'line-through', 'underline line-through'),

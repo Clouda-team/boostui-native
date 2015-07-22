@@ -7,9 +7,8 @@ define(function (require, exports, module) {
     var assert = require("base/assert");
 
     var queue = genQueue(function (list) {
-        //list = mergeQueue(list);
-        console.log("callQueue(" + JSON.stringify(list, null, 2) + ")");
-        //console.log("callQueue(", list, ")");
+        //console.log("callQueue(" + JSON.stringify(list, null, 2) + ")");
+        console.log("callQueue(", list, ")");
         lc_bridge.callQueue(JSON.stringify(list));
 
         clearHeap();
@@ -29,6 +28,7 @@ define(function (require, exports, module) {
 
     var bridge = {
         call: function (tag, method, args) {
+            var cmd = {};
             var viewTag;
             var config;
             // 对createView、updateView 等做优化 
@@ -70,11 +70,19 @@ define(function (require, exports, module) {
                 }
             }
 
+            if (tag !== "") {
+                cmd.tag = tag;
+            }
+            cmd.method = method;
+            cmd.args = args;
+            queue.push(cmd);
+            /*
             queue.push({
                 tag: tag,
                 method: method,
                 args: args
             });
+             */
         }
     };
 

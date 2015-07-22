@@ -4,6 +4,7 @@ define(function (require, exports, module) {
     var derive = require("base/derive");
     var assert = require("base/assert");
     var NativeObject = require("boost/NativeObject");
+    var TouchEvent = require("boost/TouchEvent");
     var Element = require("boost/Element");
 
     var nativeGlobal = NativeObject.global;
@@ -18,9 +19,25 @@ define(function (require, exports, module) {
         this.__createView(this.__type__, this.__config__);
     }, {
         __createView: function (type, config) {
+            var self = this;
             var nativeObj = this.__native__ = new NativeObject();
             var tag = nativeObj.tag;
+            nativeObj.__onEvent = function (type, e) {
+                self.__onEvent(type, e);
+            };
             nativeGlobal.createView(tag, type, config);
+        },
+        __onEvent: function (type, e) {
+            var event;
+            switch (type) {
+            case "touchstart":
+            case "touchend":
+                event = new TouchEvent(this, type, e.x, e.y);
+                this.dispatchEvent(event);
+                break;
+            default:
+                console.log("unknow event:" + type, e);
+            }
         },
         __getDefaultConfig: function () {
             // TODO more

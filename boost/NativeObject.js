@@ -31,6 +31,10 @@ define(function (require, exports, module) {
             queue.call(this.__tag__, method, args);
         },
 
+        __onEvent: function (type, event) {
+            //do nothing
+        },
+
         destroy: function () {
             nativeGlobal.destroyObject(this.__tag__);
         }
@@ -75,6 +79,11 @@ define(function (require, exports, module) {
         var origin = e.origin;
         var target = NativeObject.getByTag(origin);
         var type = e.boostEventType.toLowerCase();
+        if (target) {
+            // 这里为了提高效率，就不用 dispatchEvent 那一套了。
+            target.__onEvent(type, e);
+        }
+        /*
         var event;
         if (target) {
             switch (type) {
@@ -89,6 +98,7 @@ define(function (require, exports, module) {
             }
 
         }
+       */
     }, false);
 
     module.exports = NativeObject;

@@ -236,7 +236,7 @@ define(function (require, exports, module) {
             var match = rquickExpr.exec(selector);
             var m;
 
-            assert(match !== null, "现在只支持简单的选择器: #id .class tag");
+            assert(match !== null, "不支持的选择器:\"" + selector + "\",现在只支持简单的选择器: #id .class tag");
 
             if ((m = match[1])) {
                 // ID selector
@@ -265,9 +265,10 @@ define(function (require, exports, module) {
             }
             return results;
         },
-        __select: function (selector, results) {
+        __select: function (selector, results, quick) {
             var self = this;
             results = results || [];
+            quick = !!quick;
             selector = trim(selector);
             if (!selector) {
                 return results;
@@ -275,6 +276,10 @@ define(function (require, exports, module) {
 
             var match = rquickExpr.exec(selector);
             var m;
+            if (quick) {
+                //assert(match !== null, "现在只支持简单的选择器: #id .class tag");
+                assert(match !== null, "不支持的选择器:\"" + selector + "\",现在只支持简单的选择器: #id .class tag");
+            }
             if (match !== null) {
                 if ((m = match[1])) {
                     // ID selector
@@ -292,7 +297,8 @@ define(function (require, exports, module) {
                         return trim(item).length > 0;
                     });
                     //找出所有满足需求的
-                    var list = self.__select(items.pop());
+                    var list = [];
+                    self.__select(items.pop(), list, true);
 
                     //过滤不满足条件的节点
                     var count = items.length;
@@ -361,6 +367,18 @@ define(function (require, exports, module) {
                 this[name] = value;
                 break;
             }
+        },
+        getAttribute: function (name) {
+            return this[name];
+        },
+        dispatchEvent: function (event) {
+            //console.log(this.__native_tag__ + ":[" + this.tagName + "]" + event.type);
+            var ret;
+            ret = this._super(event);
+            if (!event.propagationStoped && this.parentNode !== null) {
+                ret = this.parentNode.dispatchEvent(event);
+            }
+            return ret;
         }
     });
 

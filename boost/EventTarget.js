@@ -52,7 +52,7 @@ define(function (require, exports, module) {
                     listener.call(this, event);
                 }, this);
             }
-            return !event.defaultPrevented();
+            return !event.defaultPrevented;
         }
     });
 

@@ -63,6 +63,7 @@ define(function (require, exports, module) {
         this._super(null, "NATIVE_ROOT");
     }, {
         __createView: function () {
+            //TODO: 不用调用nativeGlobal.createView吗？
             this.__native__ = new NativeObject(ROOT_ELEMENT_TAG);
         }
     });

@@ -29,6 +29,7 @@ define(function (require, exports, module) {
 
     var bridge = {
         call: function (tag, method, args) {
+            //TODO: deeply see
             var viewTag;
             var config;
             // 对createView、updateView 等做优化 

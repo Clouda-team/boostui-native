@@ -31,6 +31,10 @@ define(function (require, exports, module) {
             queue.call(this.__tag__, method, args);
         },
 
+        __onEvent: function (type, event) {
+            //do nothing
+        },
+
         destroy: function () {
             nativeGlobal.destroyObject(this.__tag__);
         }
@@ -50,6 +54,7 @@ define(function (require, exports, module) {
         updateView: NativeObject.bindNative("updateView"),
         addView: NativeObject.bindNative("addView"),
         removeView: NativeObject.bindNative("removeView"),
+        removeAllViews: NativeObject.bindNative("removeAllViews"),
 
         createAnimation: NativeObject.bindNative("createAnimation"),
         __destroy: NativeObject.bindNative("destroy"),
@@ -69,7 +74,33 @@ define(function (require, exports, module) {
         return null;
     };
 
-    //TODO Event
+
+    document.addEventListener("boost", function (e) {
+        var origin = e.origin;
+        var target = NativeObject.getByTag(origin);
+        var type = e.boostEventType.toLowerCase();
+        if (target) {
+            // 这里为了提高效率，就不用 dispatchEvent 那一套了。
+            target.__onEvent(type, e);
+        }
+        /*
+        var event;
+        if (target) {
+            switch (type) {
+            case "touchstart":
+            case "touchend":
+                event = new TouchEvent(type, target, e.x, e.y);
+                target.dispatchEvent(event);
+                break;
+            default:
+                console.log(e);
+                return;
+            }
+
+        }
+       */
+    }, false);
+
     module.exports = NativeObject;
 
 });

@@ -8,6 +8,8 @@ define(function (require, exports, module) {
     var copyProperties = require("base/copyProperties");
     var boost = require("boost/boost");
     var Text = require("boost/Text");
+    var EventTarget = require("boost/EventTarget");
+    var Event = require("boost/Event");
 
     function onStateChanged() {
         if (this.readyState == 4) {
@@ -34,6 +36,10 @@ define(function (require, exports, module) {
         //processElement(document.documentElement, boost.rootElement);
         walkElement(document.documentElement, boost.documentElement);
         applyStyle();
+
+        var event = new Event(xml, "domready");
+        xml.dispatchEvent(event);
+        //boost.dispatchEvent();
     }
 
 
@@ -209,8 +215,9 @@ define(function (require, exports, module) {
 
     //loadFromURL("test/cart.xml");
     //loadFromString(getXml("cartXml"));
-    module.exports = {
-        loadFromURL: loadFromURL,
-        loadFromString: loadFromString
-    };
+    var xml = new EventTarget();
+    xml.loadFromURL = loadFromURL;
+    xml.loadFromString = loadFromString;
+
+    module.exports = xml;
 });

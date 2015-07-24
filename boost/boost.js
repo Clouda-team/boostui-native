@@ -9,7 +9,7 @@ define(function (require, exports, module) {
     var NativeElement = require("boost/NativeElement");
     var View = require("boost/View");
     var Text = require("boost/Text");
-    //var TextInput = require("boost/TextInput");
+    var TextInput = require("boost/TextInput");
     var Image = require("boost/Image");
     var ScrollView = require("boost/ScrollView");
     var Slider = require("boost/Slider");
@@ -18,7 +18,7 @@ define(function (require, exports, module) {
     var TAG_MAP = {
         "View": View,
         "Text": Text,
-        //"TextInput": TextInput,
+        "TextInput": TextInput,
         "Image": Image,
         "ScrollView": ScrollView,
         "Slider": Slider,

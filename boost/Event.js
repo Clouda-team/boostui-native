@@ -18,13 +18,13 @@ define(function (require, exports, module) {
         preventDefault: function () {
             this.__defaultPrevented__ = true;
         },
-        isDefaultPrevented: function () {
+        "get defaultPrevented": function () {
             return this.__defaultPrevented__;
         },
         stopPropagation: function () {
             this.__propagationStopped__ = true;
         },
-        isPropagationStopped: function () {
+        "get propagationStoped": function () {
             return this.__propagationStopped__;
         }
     });

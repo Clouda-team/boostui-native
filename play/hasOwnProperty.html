@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<body>
+
+<script src="../../../lib/sea-debug.js"></script>
+<script>
+    seajs.config({
+        base: '../'
+    });
+    seajs.use("base/hasOwnProperty", function (hasOwnProperty) {
+        // 结论：对于报错，obj.hasOwnProperty与hasOwnProperty一致
+        // so: 不清楚为什么要单独搞一个hasOwnProperty出来？以后扩展？使用习惯？
+        (function () {
+            var values = [undefined, null, 3, 'xx', true, /a/, new Date(), function () {}, [], {}];
+
+            function testOne (obj, key) {
+                try {
+                    console.log('obj.hasOwnProperty(key) - obj: ' + obj);
+                    obj.hasOwnProperty(key);
+                    console.log("done");
+                } catch (e) {
+                    console.log("error: ");
+                    console.error(e);
+                }
+
+                try {
+                    console.log('hasOwnProperty(obj, key) - obj: ' + obj);
+                    hasOwnProperty(obj, key);
+                    console.log("done");
+                } catch (e) {
+                    console.log("error");
+                    console.error(e);
+                }
+            }
+            values.forEach(function (value) {
+                testOne(value, "some");
+            });
+        })();
+    });
+</script>
+
+</body>
+</html>

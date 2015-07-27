@@ -277,6 +277,7 @@ define(function (require, exports, module) {
             var match = rquickExpr.exec(selector);
             var m;
             if (quick) {
+                //TODO @ls: what will quick be?
                 //assert(match !== null, "现在只支持简单的选择器: #id .class tag");
                 assert(match !== null, "不支持的选择器:\"" + selector + "\",现在只支持简单的选择器: #id .class tag");
             }
@@ -307,6 +308,7 @@ define(function (require, exports, module) {
                         var node = element;
                         while (index--) {
                             // 没有找到符合条件的父节点，就过滤掉
+                            // TODO @ls: 目前这种实现不就是每次以当前节点为根向上寻找，下面的fixme是想改成什么样呢？还是已经失效了？
                             // FIXME 以当前节点作为根节点
                             node = node.__parentSelect(items[index]);
                             if (node === null) {

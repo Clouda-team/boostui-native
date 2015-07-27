@@ -106,6 +106,7 @@ define(function (require, exports, module) {
             return String(value);
         },
 
+        //TODO @ls 这里返回、原生组件的位置是以设备真实像素为单位？
         dp: function (value) {
             assert(!isNaN(value) && isFinite(value), "must be number");
             value = parseFloat(value);

@@ -277,7 +277,6 @@ define(function (require, exports, module) {
             var match = rquickExpr.exec(selector);
             var m;
             if (quick) {
-                //TODO @ls: what will quick be?
                 //assert(match !== null, "现在只支持简单的选择器: #id .class tag");
                 assert(match !== null, "不支持的选择器:\"" + selector + "\",现在只支持简单的选择器: #id .class tag");
             }

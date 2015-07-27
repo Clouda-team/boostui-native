@@ -74,7 +74,7 @@ define(function (require, exports, module) {
         return null;
     };
 
-
+    //TODO: @ls 这里的boost事件哪里来的？native暴露来的？
     document.addEventListener("boost", function (e) {
         var origin = e.origin;
         var target = NativeObject.getByTag(origin);

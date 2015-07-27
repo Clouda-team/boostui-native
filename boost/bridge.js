@@ -9,6 +9,7 @@ define(function (require, exports, module) {
     var queue = genQueue(function (list) {
         //console.log("callQueue(" + JSON.stringify(list, null, 2) + ")");
         console.log("callQueue(", list, ")");
+        //TODO @ls: 不是jsBinding、是网络请求拦截吧？ 这个方法在原生里实现的？
         lc_bridge.callQueue(JSON.stringify(list));
 
         clearHeap();

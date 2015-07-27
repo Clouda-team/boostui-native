@@ -4,7 +4,7 @@ define(function (require, exports, module) {
     var hasOwnProperty = require("base/hasOwnProperty");
 
     var tagMap = {};
-    var tagId = 0;
+    var tagId = 1; // tag id 从1开始,防止可能的冲突
 
     function get(tag) {
         if (hasOwnProperty(tagMap, tag)) {
@@ -26,7 +26,8 @@ define(function (require, exports, module) {
 
     function genTag() {
         //return "$__tag_" + tagId++ + "__$";
-        return "_" + tagId++;
+        //return "_" + tagId++;
+        return tagId++;
     }
 
     module.exports = {

@@ -184,7 +184,7 @@ define(function (require, exports, module) {
         options: {},
         _create: noop,
         _init: noop,
-        _trigger: function (type, origEvent, data) {
+        _trigger: function (type, data) {
             type = this.widgetName + ':' + type;
             data = data || {};
             this.$element.trigger(type, data);

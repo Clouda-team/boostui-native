@@ -46,7 +46,7 @@ define(function (require, exports, module) {
         };
     };
 
-    var GLOBAL_TAG = "";
+    var GLOBAL_TAG = null;
     var NativeGlobalObject = derive(NativeObject, function () {
         this._super(GLOBAL_TAG);
     }, {

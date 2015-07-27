@@ -9,7 +9,8 @@ define(function (require, exports, module) {
 
     var nativeGlobal = NativeObject.global;
 
-    var ROOT_ELEMENT_TAG = "tag_nativeview";
+    //var ROOT_ELEMENT_TAG = "tag_nativeview";
+    var ROOT_ELEMENT_TAG = 0;
 
     var NativeElement = derive(Element, function (type, tag) {
         this._super(tag);

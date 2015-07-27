@@ -6,7 +6,8 @@ define(function (require, exports, module) {
     var TextStylePropTypes = require("boost/TextStylePropTypes");
     var StyleSheet = require("boost/StyleSheet");
 
-    var NATIVE_VIEW_TYPE = "WrappedTextView";
+    //var NATIVE_VIEW_TYPE = "WrappedTextView";
+    var NATIVE_VIEW_TYPE = 1;
 
     var TextStyle = derive(StyleSheet, TextStylePropTypes);
 

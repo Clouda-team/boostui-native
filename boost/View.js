@@ -6,7 +6,8 @@ define(function (require, exports, module) {
     var ViewStylePropTypes = require("boost/ViewStylePropTypes");
     var StyleSheet = require("boost/StyleSheet");
 
-    var NATIVE_VIEW_TYPE = "WrappedViewGroup";
+    //var NATIVE_VIEW_TYPE = "WrappedViewGroup";
+    var NATIVE_VIEW_TYPE = 0;
 
     var ViewStyle = derive(StyleSheet, ViewStylePropTypes);
     var View = derive(NativeElement, function () {

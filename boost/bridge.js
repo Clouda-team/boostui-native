@@ -6,9 +6,19 @@ define(function (require, exports, module) {
     var copyProperties = require("base/copyProperties");
     var assert = require("base/assert");
 
+    var methodList = [
+        "createView",
+        "updateView",
+        "addView",
+        "removeView",
+        "createAnimation"
+    ];
+
     var queue = genQueue(function (list) {
+        console.log("callQueue(" + JSON.stringify(list) + ")");
+        console.log("callQueue(" + JSON.stringify(list).length + ")");
         //console.log("callQueue(" + JSON.stringify(list, null, 2) + ")");
-        console.log("callQueue(", list, ")");
+        //console.log("callQueue(", list, ")");
         lc_bridge.callQueue(JSON.stringify(list));
 
         clearHeap();
@@ -26,11 +36,16 @@ define(function (require, exports, module) {
 
     clearHeap();
 
+    var TAG_IDX = 0;
+    var METH_IDX = 1;
+    var ARGS_IDX = 2;
+
     var bridge = {
         call: function (tag, method, args) {
-            var cmd = {};
+            var cmd = [];
             var viewTag;
             var config;
+            var methodId;
             // 对createView、updateView 等做优化 
             if (tag === "") {
                 switch (method) {
@@ -70,11 +85,15 @@ define(function (require, exports, module) {
                 }
             }
 
-            if (tag !== "") {
-                cmd.tag = tag;
+            if (tag !== null) {
+                cmd.push(tag);
             }
-            cmd.method = method;
-            cmd.args = args;
+            methodId = methodList.indexOf(method);
+            if (methodId < 0) {
+                throw new Error("Native 不支持此方法或者为绑定");
+            }
+            cmd.push(methodId);
+            cmd.push(args);
             queue.push(cmd);
             /*
             queue.push({

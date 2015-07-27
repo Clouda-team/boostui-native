@@ -8,6 +8,7 @@ define(function (require, exports, module) {
     var copyProperties = require("base/copyProperties");
     var boost = require("boost/boost");
     var Text = require("boost/Text");
+    var TextInput = require("boost/TextInput");
     var EventTarget = require("boost/EventTarget");
     var Event = require("boost/Event");
 
@@ -53,7 +54,7 @@ define(function (require, exports, module) {
         if (element.nodeType === 3) {
             str = trim(element.nodeValue);
             if (str) {
-                assert(nativeParentElement instanceof Text, "文本只能添加到 <Text> 节点中");
+                assert(nativeParentElement instanceof Text || nativeParentElement instanceof TextInput, "文本只能添加到 <Text> 或者 <TextInput> 节点中");
                 nativeParentElement.value += str;
             }
         } else if (element.nodeType === 1) {

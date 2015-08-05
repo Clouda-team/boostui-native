@@ -20,6 +20,7 @@ define(function (require, exports, module) {
             if (waiting) {
                 return;
             }
+            console.log(+new Date, "Queue.run");
             waiting = true;
             timeFlag = setTimeout(call, TIME_OUT);
         }

@@ -15,12 +15,23 @@ define(function (require, exports, module) {
     ];
 
     var queue = genQueue(function (list) {
-        console.log("callQueue(" + JSON.stringify(list) + ")");
-        console.log("callQueue(" + JSON.stringify(list).length + ")");
-        //console.log("callQueue(" + JSON.stringify(list, null, 2) + ")");
-        //console.log("callQueue(", list, ")");
-        lc_bridge.callQueue(JSON.stringify(list));
+        //var count = list.length;
+        //var index = 0;
+        //var size = 50;
+        var cmdStr;
 
+        //while (index < count) {
+        cmdStr = JSON.stringify(list);
+        //cmdStr = JSON.stringify(list.slice(index, index + size));
+        //index += size;
+        //console.log("callQueue(" + JSON.stringify(list) + ")");
+        //console.log("callQueue(" + JSON.stringify(list, null, 2) + ")");
+        console.log(cmdStr);
+        console.log(cmdStr.length);
+        console.log(+new Date, "callQueue");
+        lc_bridge.callQueue(cmdStr);
+        console.log(+new Date, "callQueueEnd");
+        //}
         clearHeap();
     });
     queue.run();
@@ -47,20 +58,21 @@ define(function (require, exports, module) {
             var config;
             var methodId;
             // 对createView、updateView 等做优化 
-            if (tag === "") {
+            if (tag === null) {
                 switch (method) {
                 case "createView":
-                    viewTag = args[0];
+                    viewTag = "_" + args[0];
 
                     //将 config 参数存起来,方便 update 的时候改动
                     config = copyProperties({}, args[2]);
                     createHeap[viewTag] = config;
                     args[2] = config;
+                    //args[2] = {};
                     break;
 
                 case "updateView":
 
-                    viewTag = args[0];
+                    viewTag = "_" + args[0];
 
                     //如果 create 堆里有需要 update 的节点,则直接更新 config
                     if (hasOwnProperty(createHeap, viewTag)) {
@@ -78,6 +90,7 @@ define(function (require, exports, module) {
                     config = copyProperties({}, args[2]);
                     updateHeap[viewTag] = config;
                     args[2] = config;
+                    //args[2] = {};
                     break;
 
                 default:

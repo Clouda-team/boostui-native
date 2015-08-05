@@ -48,11 +48,11 @@ define(function (require, exports, module) {
             var returnValue;
             var _super = this._super;
             this._super = superFn;
-            try {
-                returnValue = fn.apply(this, arguments);
-            } finally {
-                this._super = _super;
-            }
+            //try {
+            returnValue = fn.apply(this, arguments);
+            //} finally {
+            this._super = _super;
+            //}
             return returnValue;
         };
     }

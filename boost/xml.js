@@ -19,6 +19,7 @@ define(function (require, exports, module) {
     }
 
     function loadFromURL(url) {
+        console.log(+new Date, "loadFromURL:" + url);
         var xhr = new XMLHttpRequest();
         xhr.onreadystatechange = onStateChanged;
         xhr.open("GET", url, true);
@@ -27,13 +28,17 @@ define(function (require, exports, module) {
 
 
     function loadFromString(str) {
+        console.profile("React Profile");
+        console.log(+new Date, "loadFromString:...");
         var parser = new DOMParser();
         var xmlDoc = parser.parseFromString(str, "text/xml");
         process(xmlDoc);
+        console.profileEnd();
     }
 
     function process(document) {
-        console.log(document);
+        console.log(+new Date, "process", document);
+        console.log(performance.timing);
         //processElement(document.documentElement, boost.rootElement);
         walkElement(document.documentElement, boost.documentElement);
         applyStyle();
@@ -64,6 +69,7 @@ define(function (require, exports, module) {
                 break;
             default:
                 nativeElement = boost.createElement(element.tagName);
+                nativeParentElement.appendChild(nativeElement);
                 attributes = element.attributes;
                 count = attributes.length;
                 for (index = 0; index < count; index++) {
@@ -72,7 +78,6 @@ define(function (require, exports, module) {
                 }
 
                 walkElement(element, nativeElement);
-                nativeParentElement.appendChild(nativeElement);
             }
         }
     }

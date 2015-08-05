@@ -49,13 +49,17 @@ define(function (require, exports, module) {
             //appendChild: function (child) {
             var tag = this.__native__.tag;
             assert(child instanceof NativeElement, "child must be a NativeElement");
+            var ret = this._super(child, index);
+            //这个地方一定要在 _super 调用之后,因为在之前有可能添加和删除的顺序会错
             nativeGlobal.addView(tag, child.__native__.tag, index);
-            return this._super(child, index);
+            return ret;
         },
         __removeChildAt: function (index) {
             var tag = this.__native__.tag;
+            var ret = this._super(index);
+            //这个地方一定要在 _super 调用之后,因为在之前有可能添加和删除的顺序会错
             nativeGlobal.removeView(tag, index);
-            return this._super(index);
+            return ret;
         },
         __update: function (key, value) {
             var config = this.__config__;

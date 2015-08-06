@@ -56,9 +56,14 @@ define(function (require, exports, module) {
             var self = this;
             if (this.__style__ === null) {
                 style = this.__getStyle();
-                style.addEventListener("propertychange", function (e) {
-                    self.__styleChange(e.key, e.value, e.origValue);
-                });
+                style.__onPropertyChange = function (key, value, origValue) {
+                    self.__styleChange(key, value, origValue);
+                };
+
+                //style.addEventListener("propertychange", function (e) {
+                //    self.__styleChange(e.key, e.value, e.origValue);
+                //});
+
                 this.__style__ = style;
             }
             return this.__style__;

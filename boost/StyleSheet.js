@@ -44,6 +44,9 @@ define(function (require, exports, module) {
         },
         __getProps: function () {
             return this.__styleProps__;
+        },
+        __onPropertyChange: function (key, value, origValue) {
+            // nothing
         }
     });
 
@@ -77,8 +80,9 @@ define(function (require, exports, module) {
                 value = validator(value);
                 if (value !== origValue) {
                     this.__styleProps__[key] = value;
-                    event = new PropertyChangeEvent(this, key, value, origValue);
-                    this.dispatchEvent(event);
+                    this.__onPropertyChange(key, value, origValue);
+                    //event = new PropertyChangeEvent(this, key, value, origValue);
+                    //this.dispatchEvent(event);
                 }
             };
         });

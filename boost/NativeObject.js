@@ -84,6 +84,10 @@ define(function (require, exports, module) {
         if (target) {
             // 这里为了提高效率，就不用 dispatchEvent 那一套了。
             target.__onEvent(type, e);
+        } else if (type === "boosterror") {
+            console.error(e.stack);
+            //TODO 构建错误显示界面
+            //throw new NativeError(e.stack);
         }
         /*
         var event;

@@ -11,6 +11,7 @@ define(function (require, exports, module) {
     var TextInput = require("boost/TextInput");
     var EventTarget = require("boost/EventTarget");
     var Event = require("boost/Event");
+    var nativeGlobal = require("boost/NativeObject").global;
 
     function onStateChanged() {
         if (this.readyState == 4) {
@@ -28,20 +29,29 @@ define(function (require, exports, module) {
 
 
     function loadFromString(str) {
-        console.profile("React Profile");
-        console.log(+new Date, "loadFromString:...");
+        //console.profile("React Profile");
+        //console.log(+new Date, "loadFromString:...");
+        console.time("解析XML");
         var parser = new DOMParser();
         var xmlDoc = parser.parseFromString(str, "text/xml");
+        console.timeEnd("解析XML");
+
         process(xmlDoc);
-        console.profileEnd();
+
+        //console.profileEnd();
     }
 
     function process(document) {
-        console.log(+new Date, "process", document);
-        console.log(performance.timing);
+        //console.log(+new Date, "process", document);
+        //console.log(performance.timing);
         //processElement(document.documentElement, boost.rootElement);
+        console.time("构建ViewTree");
         walkElement(document.documentElement, boost.documentElement);
+        console.timeEnd("构建ViewTree");
+
+        console.time("应用样式");
         applyStyle();
+        console.timeEnd("应用样式");
 
         var event = new Event(xml, "domready");
         xml.dispatchEvent(event);
@@ -65,7 +75,12 @@ define(function (require, exports, module) {
         } else if (element.nodeType === 1) {
             switch (element.tagName.toUpperCase()) {
             case "STYLE":
+                console.time("解析样式");
                 parseStyle(element.firstChild.nodeValue);
+                console.timeEnd("解析样式");
+                break;
+            case "FLUSH":
+                nativeGlobal.flush();
                 break;
             default:
                 nativeElement = boost.createElement(element.tagName);

@@ -26,7 +26,8 @@ define(function (require, exports, module) {
 
     var documentProto = {
         constructor: function () {
-            this._super();
+            //this._super();
+            EventTarget.call(this);
             this.__tagMap__ = {};
             this.__docuemntElement__ = null;
         },

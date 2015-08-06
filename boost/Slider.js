@@ -10,7 +10,8 @@ define(function (require, exports, module) {
     var NATIVE_VIEW_TYPE = 4;
 
     var Slider = derive(NativeElement, function () {
-        this._super(NATIVE_VIEW_TYPE, "Slider");
+        //this._super(NATIVE_VIEW_TYPE, "Slider");
+        NativeElement.call(this, NATIVE_VIEW_TYPE, "Slider");
     }, {
         __getStyle: function () {
             //assert(false, "Slider 不支持 style 属性");

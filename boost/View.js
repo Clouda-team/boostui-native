@@ -11,7 +11,8 @@ define(function (require, exports, module) {
 
     var ViewStyle = derive(StyleSheet, ViewStylePropTypes);
     var View = derive(NativeElement, function () {
-        this._super(NATIVE_VIEW_TYPE, "View");
+        //this._super(NATIVE_VIEW_TYPE, "View");
+        NativeElement.call(this, NATIVE_VIEW_TYPE, "View");
     }, {
         __getStyle: function () {
             return new ViewStyle();

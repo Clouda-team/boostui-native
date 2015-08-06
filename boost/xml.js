@@ -29,7 +29,6 @@ define(function (require, exports, module) {
 
 
     function loadFromString(str) {
-        //console.profile("React Profile");
         //console.log(+new Date, "loadFromString:...");
         console.time("解析XML");
         var parser = new DOMParser();
@@ -38,10 +37,10 @@ define(function (require, exports, module) {
 
         process(xmlDoc);
 
-        //console.profileEnd();
     }
 
     function process(document) {
+        //console.profile("React Profile");
         //console.log(+new Date, "process", document);
         //console.log(performance.timing);
         //processElement(document.documentElement, boost.rootElement);
@@ -55,6 +54,7 @@ define(function (require, exports, module) {
 
         var event = new Event(xml, "domready");
         xml.dispatchEvent(event);
+        //console.profileEnd();
         //boost.dispatchEvent();
     }
 

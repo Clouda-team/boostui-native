@@ -12,8 +12,10 @@ define(function (require, exports, module) {
     //var ROOT_ELEMENT_TAG = "tag_nativeview";
     var ROOT_ELEMENT_TAG = 0;
 
+    var _super = Element.prototype;
     var NativeElement = derive(Element, function (type, tag) {
-        this._super(tag);
+        //this._super(tag);
+        Element.call(this, tag);
         this.__type__ = type;
         this.__native__ = null;
         this.__config__ = this.__getDefaultConfig();
@@ -50,14 +52,16 @@ define(function (require, exports, module) {
             //appendChild: function (child) {
             var tag = this.__native__.tag;
             assert(child instanceof NativeElement, "child must be a NativeElement");
-            var ret = this._super(child, index);
+            //var ret = this._super(child, index);
+            var ret = _super.__addChildAt.call(this, child, index);
             //这个地方一定要在 _super 调用之后,因为在之前有可能添加和删除的顺序会错
             nativeGlobal.addView(tag, child.__native__.tag, index);
             return ret;
         },
         __removeChildAt: function (index) {
             var tag = this.__native__.tag;
-            var ret = this._super(index);
+            //var ret = this._super(index);
+            var ret = _super.__removeChildAt.call(this, index);
             //这个地方一定要在 _super 调用之后,因为在之前有可能添加和删除的顺序会错
             nativeGlobal.removeView(tag, index);
             return ret;
@@ -78,12 +82,14 @@ define(function (require, exports, module) {
         //__styleChange
         __styleChange: function (key, value, origValue) {
             this.__update(key, value);
-            return this._super(key, value, origValue);
+            //return this._super(key, value, origValue);
+            return _super.__styleChange.call(this, key, value, origValue);
         }
     });
 
     var NativeRootElement = derive(NativeElement, function () {
-        this._super(null, "NATIVE_ROOT");
+        //this._super(null, "NATIVE_ROOT");
+        NativeElement.call(this, null, "NATIVE_ROOT");
     }, {
         __createView: function () {
             this.__native__ = new NativeObject(ROOT_ELEMENT_TAG);

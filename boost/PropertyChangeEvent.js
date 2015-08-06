@@ -5,7 +5,8 @@ define(function (require, exports, module) {
     var Event = require("boost/Event");
 
     var PropertyChangeEvent = derive(Event, function (target, key, value, origValue) {
-        this._super(target, "propertychange");
+        //this._super(target, "propertychange");
+        Event.call(this, target, "propertychange");
         this.__key__ = key;
         this.__value__ = value;
         this.__orig__ = origValue;

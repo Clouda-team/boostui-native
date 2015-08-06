@@ -69,40 +69,43 @@ define(function (require, exports, module) {
             constructor = hasOwnProperty(proto, "constructor") ?
                 proto.constructor :
                 function () {
-                    this._super.apply(this, arguments);
+                    //this._super.apply(this, arguments);
+                    parent.apply(this, arguments);
                 };
             delete proto.constructor;
         }
 
-        var tmp = function () {},
-            //子类构造函数
-            subClass = bindSuper(constructor, parent),
+        var //tmp = function () {},
+        //子类构造函数
+        //subClass = bindSuper(constructor, parent),
+            subClass = constructor,
             subClassPrototype,
             key, value,
             parts, modifier, properties, property;
 
         //原型链桥接
-        tmp.prototype = parent.prototype;
-        subClassPrototype = new tmp();
+        //tmp.prototype = parent.prototype;
+        //subClassPrototype = new tmp();
+        subClassPrototype = Object.create(parent.prototype);
         proto = proto || {};
 
 
         //复制属性到子类的原型链上
-        copyProperties(
-            subClassPrototype,
-            constructor.prototype
-        );
-        subClassPrototype.constructor = constructor.prototype.constructor;
+        //copyProperties(
+        //    subClassPrototype,
+        //    constructor.prototype
+        //);
+        //subClassPrototype.constructor = constructor.prototype.constructor;
 
         properties = {};
         each(proto, function (value, key) {
             parts = key.split(" ");
             if (parts.length === 1) {
-                if (isFunction(value)) {
-                    subClassPrototype[key] = bindSuper(value, parent.prototype[key]);
-                } else {
-                    subClassPrototype[key] = value;
-                }
+                //if (isFunction(value)) {
+                //subClassPrototype[key] = bindSuper(value, parent.prototype[key]);
+                //} else {
+                subClassPrototype[key] = value;
+                //}
             } else {
                 modifier = parts.shift();
                 key = parts.join(" ");
@@ -125,6 +128,7 @@ define(function (require, exports, module) {
         //});
 
         subClass.prototype = subClassPrototype;
+        subClassPrototype.constructor = subClass;
         return subClass;
     }
 

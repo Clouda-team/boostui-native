@@ -9,8 +9,10 @@ define(function (require, exports, module) {
     var each = require("base/each");
     var push = [].push;
 
+    var _super = EventTarget.prototype;
     var Element = derive(EventTarget, function (tag) {
-        this._super();
+        //this._super();
+        EventTarget.call(this);
         this.__tag__ = tag.toUpperCase();
         this.__id__ = null;
         this.__style__ = null;
@@ -374,7 +376,8 @@ define(function (require, exports, module) {
         dispatchEvent: function (event) {
             //console.log(this.__native_tag__ + ":[" + this.tagName + "]" + event.type);
             var ret;
-            ret = this._super(event);
+            //ret = this._super(event);
+            ret = _super.dispatchEvent.call(this, event);
             if (!event.propagationStoped && this.parentNode !== null) {
                 ret = this.parentNode.dispatchEvent(event);
             }

@@ -12,7 +12,8 @@ define(function (require, exports, module) {
     var TextStyle = derive(StyleSheet, TextStylePropTypes);
 
     var TextInput = derive(NativeElement, function () {
-        this._super(NATIVE_VIEW_TYPE, "TextInput");
+        //this._super(NATIVE_VIEW_TYPE, "TextInput");
+        NativeElement.call(this, NATIVE_VIEW_TYPE, "TextInput");
     }, {
         __getStyle: function () {
             return new TextStyle();

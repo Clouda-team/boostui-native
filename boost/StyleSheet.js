@@ -14,7 +14,8 @@ define(function (require, exports, module) {
 
 
     var StyleSheet = derive(EventTarget, function () {
-        this._super();
+        //this._super();
+        EventTarget.call(this);
         this.__styleProps__ = {};
     }, {
 

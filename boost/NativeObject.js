@@ -10,7 +10,8 @@ define(function (require, exports, module) {
     var NativeObject = derive(EventTarget, function (tag) {
         var origObj;
 
-        this._super();
+        //this._super();
+        EventTarget.call(this);
         if (tag === undefined) {
             tag = tagMap.genTag();
         }
@@ -48,7 +49,8 @@ define(function (require, exports, module) {
 
     var GLOBAL_TAG = null;
     var NativeGlobalObject = derive(NativeObject, function () {
-        this._super(GLOBAL_TAG);
+        //this._super(GLOBAL_TAG);
+        NativeObject.call(this, GLOBAL_TAG);
     }, {
         createView: NativeObject.bindNative("createView"),
         updateView: NativeObject.bindNative("updateView"),

@@ -10,7 +10,8 @@ define(function (require, exports, module) {
     var NATIVE_VIEW_TYPE = 3;
 
     var ScrollView = derive(NativeElement, function () {
-        this._super(NATIVE_VIEW_TYPE, "ScrollView");
+        //this._super(NATIVE_VIEW_TYPE, "ScrollView");
+        NativeElement.call(this, NATIVE_VIEW_TYPE, "ScrollView");
     }, {
         __getStyle: function () {
             //assert(false, "ScrollView 不支持 style 属性");

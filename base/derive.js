@@ -69,7 +69,6 @@ define(function (require, exports, module) {
             constructor = hasOwnProperty(proto, "constructor") ?
                 proto.constructor :
                 function () {
-                    //this._super.apply(this, arguments);
                     parent.apply(this, arguments);
                 };
             delete proto.constructor;

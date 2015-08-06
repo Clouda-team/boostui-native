@@ -224,8 +224,10 @@ define(function (require, exports, module) {
             for (index = 0; index < count; index++) {
                 item = list[index];
                 parts = item.split(":");
-                key = toCamelCase(trim(parts[0]));
-                ret[key] = trim(parts[1]);
+                if (parts.length > 1) {
+                    key = toCamelCase(trim(parts[0]));
+                    ret[key] = trim(parts[1]);
+                }
             }
             return ret;
         },

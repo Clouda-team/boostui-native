@@ -11,7 +11,9 @@ define(function (require, exports, module) {
         "updateView",
         "addView",
         "removeView",
-        "createAnimation"
+        //for TEST
+        "flush"
+        //"createAnimation"
     ];
 
     var queue = genQueue(function (list) {
@@ -26,13 +28,16 @@ define(function (require, exports, module) {
         //index += size;
         //console.log("callQueue(" + JSON.stringify(list) + ")");
         //console.log("callQueue(" + JSON.stringify(list, null, 2) + ")");
-        console.log(cmdStr);
-        console.log(cmdStr.length);
-        console.log(+new Date, "callQueue");
+        //console.log(cmdStr);
+        //console.log("命令共" + cmdStr.length + "字节");
+        //console.log(+new Date, "callQueue");
+        console.time("callQueue");
         lc_bridge.callQueue(cmdStr);
-        console.log(+new Date, "callQueueEnd");
+        console.timeEnd("callQueue");
+        //console.log(+new Date, "callQueueEnd");
         //}
         clearHeap();
+        console.timeEnd("调用");
     });
     queue.run();
 

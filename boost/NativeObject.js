@@ -55,6 +55,8 @@ define(function (require, exports, module) {
         addView: NativeObject.bindNative("addView"),
         removeView: NativeObject.bindNative("removeView"),
         removeAllViews: NativeObject.bindNative("removeAllViews"),
+        //for TEST
+        flush: NativeObject.bindNative("flush"),
 
         createAnimation: NativeObject.bindNative("createAnimation"),
         __destroy: NativeObject.bindNative("destroy"),

@@ -56,12 +56,11 @@ define(function (require, exports, module) {
         updateView: NativeObject.bindNative("updateView"),
         addView: NativeObject.bindNative("addView"),
         removeView: NativeObject.bindNative("removeView"),
-        removeAllViews: NativeObject.bindNative("removeAllViews"),
-        //for TEST
-        flush: NativeObject.bindNative("flush"),
-
         createAnimation: NativeObject.bindNative("createAnimation"),
-        __destroy: NativeObject.bindNative("destroy"),
+        startAnimation: NativeObject.bindNative("startAnimation"),
+        cancelAnimation: NativeObject.bindNative("cancelAnimation"),
+
+        //__destroy: NativeObject.bindNative("destroy"),
         destroyObject: function (tag) {
             this.__destroy(tag);
         }

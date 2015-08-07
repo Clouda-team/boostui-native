@@ -21,6 +21,9 @@ define(function (require, exports, module) {
         this.__config__ = this.__getDefaultConfig();
         this.__createView(this.__type__, this.__config__);
     }, {
+        "get nativeObject": function () {
+            return this.__native__;
+        },
         __createView: function (type, config) {
             var self = this;
             var nativeObj = this.__native__ = new NativeObject();

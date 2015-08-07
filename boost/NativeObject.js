@@ -59,6 +59,8 @@ define(function (require, exports, module) {
         createAnimation: NativeObject.bindNative("createAnimation"),
         startAnimation: NativeObject.bindNative("startAnimation"),
         cancelAnimation: NativeObject.bindNative("cancelAnimation"),
+        //FOR TEST
+        test: NativeObject.bindNative("test"),
 
         //__destroy: NativeObject.bindNative("destroy"),
         destroyObject: function (tag) {

@@ -56,6 +56,9 @@ define(function (require, exports, module) {
         case "STYLE":
             parseStyle(element.firstChild.nodeValue);
             break;
+        case "FLUSH":
+            nativeGlobal.test();
+            break;
         default:
             nativeElement = boost.createElement(element.tagName);
             nativeParentElement.appendChild(nativeElement);

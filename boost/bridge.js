@@ -13,7 +13,8 @@ define(function (require, exports, module) {
         "removeView",
         "createAnimation",
         "startAnimation",
-        "cancelAnimation"
+        "cancelAnimation",
+        "test"
     ];
 
     var queue = genQueue(function (list) {

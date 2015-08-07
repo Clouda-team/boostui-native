@@ -4,9 +4,8 @@ define(function (require, exports, module) {
 
     var StyleSheet = require("boost/StyleSheet");
     var LayoutPropTypes = require("boost/LayoutPropTypes");
-    //var ViewPropTypes = require("boost/ViewPropTypes");
+    var validator = require("boost/validator");
 
-    var validator = StyleSheet.validator;
     var number = validator.number;
     var dp = validator.dp;
     var string = validator.string;

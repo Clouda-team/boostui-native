@@ -20,7 +20,6 @@ define(function (require, exports, module) {
     }
 
     function loadFromURL(url) {
-        console.log(+new Date, "loadFromURL:" + url);
         var xhr = new XMLHttpRequest();
         xhr.onreadystatechange = onStateChanged;
         xhr.open("GET", url, true);
@@ -29,69 +28,47 @@ define(function (require, exports, module) {
 
 
     function loadFromString(str) {
-        //console.log(+new Date, "loadFromString:...");
-        console.time("解析XML");
         var parser = new DOMParser();
         var xmlDoc = parser.parseFromString(str, "text/xml");
-        console.timeEnd("解析XML");
-
         process(xmlDoc);
-
     }
 
     function process(document) {
-        //console.profile("React Profile");
-        //console.log(+new Date, "process", document);
-        //console.log(performance.timing);
-        //processElement(document.documentElement, boost.rootElement);
-        console.time("构建ViewTree");
         walkElement(document.documentElement, boost.documentElement);
-        console.timeEnd("构建ViewTree");
-
-        console.time("应用样式");
         applyStyle();
-        console.timeEnd("应用样式");
-
         var event = new Event(xml, "domready");
         xml.dispatchEvent(event);
-        //console.profileEnd();
-        //boost.dispatchEvent();
     }
 
 
     function processElement(element, nativeParentElement) {
+        var nodeType;
         var str;
         var nativeElement;
         var attributes;
         var attribute;
         var count;
         var index;
-        if (element.nodeType === 3) {
-            str = trim(element.nodeValue);
-            if (str) {
-                assert(nativeParentElement instanceof Text || nativeParentElement instanceof TextInput, "文本只能添加到 <Text> 或者 <TextInput> 节点中");
-                nativeParentElement.value += str;
-            }
-        } else if (element.nodeType === 1) {
-            switch (element.tagName.toUpperCase()) {
-            case "STYLE":
-                console.time("解析样式");
-                parseStyle(element.firstChild.nodeValue);
-                console.timeEnd("解析样式");
-                break;
-            case "FLUSH":
-                nativeGlobal.flush();
-                break;
-            default:
-                nativeElement = boost.createElement(element.tagName);
-                nativeParentElement.appendChild(nativeElement);
-                attributes = element.attributes;
-                count = attributes.length;
-                for (index = 0; index < count; index++) {
-                    attribute = attributes[index];
-                    nativeElement.setAttribute(attribute.name, attribute.value);
-                }
 
+
+        var tagName = element.tagName.toUpperCase();
+        switch (tagName) {
+        case "STYLE":
+            parseStyle(element.firstChild.nodeValue);
+            break;
+        default:
+            nativeElement = boost.createElement(element.tagName);
+            nativeParentElement.appendChild(nativeElement);
+            attributes = element.attributes;
+            count = attributes.length;
+            for (index = 0; index < count; index++) {
+                attribute = attributes[index];
+                nativeElement.setAttribute(attribute.name, attribute.value);
+            }
+
+            if (tagName === "TEXT" || tagName === "TEXTINPUT") {
+                nativeElement.value = element.firstChild.nodeValue;
+            } else {
                 walkElement(element, nativeElement);
             }
         }
@@ -100,7 +77,7 @@ define(function (require, exports, module) {
     function walkElement(element, nativeParentElement) {
         var child;
         var tag;
-        for (child = element.firstChild; child !== null; child = child.nextSibling) {
+        for (child = element.firstElementChild; child !== null; child = child.nextElementSibling) {
             processElement(child, nativeParentElement);
         }
     }
@@ -236,8 +213,6 @@ define(function (require, exports, module) {
         }
     });
 
-    //loadFromURL("test/cart.xml");
-    //loadFromString(getXml("cartXml"));
     var xml = new EventTarget();
     xml.loadFromURL = loadFromURL;
     xml.loadFromString = loadFromString;

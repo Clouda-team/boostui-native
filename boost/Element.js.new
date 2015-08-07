@@ -7,6 +7,8 @@ define(function (require, exports, module) {
     var StyleSheet = require("boost/StyleSheet");
     var trim = require("base/trim");
     var each = require("base/each");
+    var slice = require("base/slice");
+    var hasOwnProperty = require("base/hasOwnProperty");
     var push = [].push;
 
     var _super = EventTarget.prototype;
@@ -20,9 +22,15 @@ define(function (require, exports, module) {
         this.__classList__ = [];
         this.__children__ = [];
         this.__parent__ = null;
+
+        this.__childrenIdMap__ = {};
+        this.__childrenTagMap__ = {};
+        this.__childrenClassMap__ = {};
+        this.__isDirty__ = true;
     }, {
         "set id": function (value) {
             this.__id__ = value;
+            this.__dirtyParent();
         },
         "get id": function () {
             return this.__id__;
@@ -41,6 +49,7 @@ define(function (require, exports, module) {
                 }
             }
             this.__classList__ = classList;
+            this.__dirtyParent();
         },
         "get className": function () {
             return this.__className__;
@@ -114,6 +123,20 @@ define(function (require, exports, module) {
         "get nodeType": function () {
             return 1; //ELEMENT_NODE;
         },
+        __dirty: function () {
+            if (!this.__isDirty__) {
+                this.__isDirty__ = true;
+                this.__childrenIdMap__ = {};
+                this.__childrenClassMap__ = {};
+                this.__childrenTagMap__ = {};
+                this.__dirtyParent();
+            }
+        },
+        __dirtyParent: function () {
+            if (this.__parent__ !== null) {
+                this.__parent__.__dirty();
+            }
+        },
         __getStyle: function () {
             return new StyleSheet();
         },
@@ -127,11 +150,13 @@ define(function (require, exports, module) {
             }
             this.__children__.splice(index, 0, child);
             child.__parent__ = this;
+            this.__dirty();
         },
         __removeChildAt: function (index) {
             var child = this.childNodes[index];
             this.childNodes.splice(index, 1);
             child.__parent__ = null;
+            this.__dirty();
         },
         appendChild: function (child) {
             this.__addChildAt(child, this.__children__.length);
@@ -179,7 +204,7 @@ define(function (require, exports, module) {
             var child;
             for (index = 0; index < count; index++) {
                 child = childNodes[index];
-                if (callback(child) === true) {
+                if (callback(child, this) === true) {
                     return true;
                 }
                 if (child.__findChild(callback)) {
@@ -191,7 +216,11 @@ define(function (require, exports, module) {
         },
         getElementById: function (id) {
             var ret = null;
-            this.__findChild(function (element) {
+            var map = this.__childrenIdMap__;
+            if (hasOwnProperty(map, id)) {
+                return map[id];
+            }
+            this.__findChild(function (element, parent) {
                 if (element.id === id) {
                     ret = element;
                     //如果找到指定 Element, 返回 true, 停止遍历
@@ -199,12 +228,16 @@ define(function (require, exports, module) {
                 }
                 return false;
             });
-
+            map[id] = ret;
             return ret;
         },
         getElementsByClassName: function (className) {
-            var ret = [];
+            var map = this.__childrenClassMap__;
+            if (hasOwnProperty(map, className)) {
+                return slice(map[className]);
+            }
 
+            var ret = [];
             this.__findChild(function (element) {
                 if (element.classList.indexOf(className) > -1) {
                     ret.push(element);
@@ -212,13 +245,17 @@ define(function (require, exports, module) {
                 //始终返回 false, 继续查找
                 return false;
             });
-
-            return ret;
+            map[className] = ret;
+            return slice(ret);
         },
         getElementsByTagName: function (tag) {
             tag = tag.toUpperCase();
-            var ret = [];
+            var map = this.__childrenTagMap__;
+            if (hasOwnProperty(map, tag)) {
+                return slice(map[tag]);
+            }
 
+            var ret = [];
             this.__findChild(function (element) {
                 if (element.tagName === tag) {
                     ret.push(element);
@@ -227,7 +264,8 @@ define(function (require, exports, module) {
                 return false;
             });
 
-            return ret;
+            map[tag] = ret;
+            return slice(ret);
         },
         __findParent: function (callback) {
             var node = this;
@@ -363,7 +401,8 @@ define(function (require, exports, module) {
         },
        */
         setAttribute: function (name, value) {
-            switch (name.toLowerCase()) {
+            //switch (name.toLowerCase()) {
+            switch (name) {
             case "class":
                 this.className = value;
                 break;

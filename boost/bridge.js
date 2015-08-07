@@ -11,33 +11,16 @@ define(function (require, exports, module) {
         "updateView",
         "addView",
         "removeView",
-        //for TEST
-        "flush"
-        //"createAnimation"
+        "createAnimation",
+        "startAnimation",
+        "cancelAnimation"
     ];
 
     var queue = genQueue(function (list) {
-        //var count = list.length;
-        //var index = 0;
-        //var size = 50;
         var cmdStr;
-
-        //while (index < count) {
         cmdStr = JSON.stringify(list);
-        //cmdStr = JSON.stringify(list.slice(index, index + size));
-        //index += size;
-        //console.log("callQueue(" + JSON.stringify(list) + ")");
-        //console.log("callQueue(" + JSON.stringify(list, null, 2) + ")");
-        //console.log(cmdStr);
-        //console.log("命令共" + cmdStr.length + "字节");
-        //console.log(+new Date, "callQueue");
-        console.time("callQueue");
         lc_bridge.callQueue(cmdStr);
-        console.timeEnd("callQueue");
-        //console.log(+new Date, "callQueueEnd");
-        //}
         clearHeap();
-        console.timeEnd("调用");
     });
     queue.run();
 
@@ -113,13 +96,6 @@ define(function (require, exports, module) {
             cmd.push(methodId);
             cmd.push(args);
             queue.push(cmd);
-            /*
-            queue.push({
-                tag: tag,
-                method: method,
-                args: args
-            });
-             */
         }
     };
 

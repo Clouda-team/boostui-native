@@ -31,7 +31,7 @@ define(function (require, exports, module) {
             nativeGlobal.createView(tag, type, config);
         },
         __onEvent: function (type, e) {
-            console.log("tag:" + this.__native__.tag, "type:" + this.__type__, "event:" + type);
+            //console.log("tag:" + this.__native__.tag, "type:" + this.__type__, "event:" + type);
             var event;
             switch (type) {
             case "touchstart":

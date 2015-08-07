@@ -69,17 +69,20 @@ define(function (require, exports, module) {
         config = arguments[index];
 
         each(config, function (validator, key) {
-            proto["get " + key] = function () {
-                return hasOwnProperty(this.__styleProps__, key) ?
-                    this.__styleProps__[key] : "";
-            };
+
+            //为了性能，直接从 __styleProps__ 获取值
+            //proto["get " + key] = function () {
+            //    return hasOwnProperty(this.__styleProps__, key) ?
+            //        this.__styleProps__[key] : "";
+            //};
 
             proto["set " + key] = function (value) {
-                var origValue = this[key];
+                var origValue = this.__styleProps__[key];
                 var event;
                 value = validator(value);
                 if (value !== origValue) {
                     this.__styleProps__[key] = value;
+                    //改为直接的函数调用，提高性能
                     this.__onPropertyChange(key, value, origValue);
                     //event = new PropertyChangeEvent(this, key, value, origValue);
                     //this.dispatchEvent(event);

@@ -39,6 +39,7 @@ define(function (require, exports, module) {
             case "animationstart":
             case "animationend":
                 event = new AnimationEvent(this, type);
+                this.dispatchEvent(event);
                 break;
             default:
                 console.log("unknow event:" + type, e);

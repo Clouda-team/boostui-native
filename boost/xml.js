@@ -34,6 +34,7 @@ define(function (require, exports, module) {
     }
 
     function process(document) {
+        console.log("process:", document);
         walkElement(document.documentElement, boost.documentElement);
         applyStyle();
         var event = new Event(xml, "domready");

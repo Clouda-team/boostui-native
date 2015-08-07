@@ -84,6 +84,7 @@ define(function (require, exports, module) {
         var origin = e.origin;
         var target = NativeObject.getByTag(origin);
         var type = e.boostEventType.toLowerCase();
+        //console.log("origin:" + origin, "type:" + type, e);
         if (target) {
             // 这里为了提高效率，就不用 dispatchEvent 那一套了。
             target.__onEvent(type, e);

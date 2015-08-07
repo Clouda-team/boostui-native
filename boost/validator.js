@@ -10,6 +10,13 @@ define(function (require, exports, module) {
 
 
     var validator = {
+        map: function (set) {
+            return function (value) {
+                value = trim(value);
+                assert(hasOwnProperty(set, value), "unknow key \"" + value + "\"");
+                return set[value];
+            };
+        },
         oneOf: function ( /*list*/ ) {
             var list = slice(arguments);
             return function (value) {

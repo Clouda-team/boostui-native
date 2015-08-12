@@ -9,8 +9,10 @@ define(function (require, exports, module) {
     var each = require("base/each");
     var push = [].push;
 
+    var _super = EventTarget.prototype;
     var Element = derive(EventTarget, function (tag) {
-        this._super();
+        //this._super();
+        EventTarget.call(this);
         this.__tag__ = tag.toUpperCase();
         this.__id__ = null;
         this.__style__ = null;
@@ -54,9 +56,14 @@ define(function (require, exports, module) {
             var self = this;
             if (this.__style__ === null) {
                 style = this.__getStyle();
-                style.addEventListener("propertychange", function (e) {
-                    self.__styleChange(e.key, e.value, e.origValue);
-                });
+                style.__onPropertyChange = function (key, value, origValue) {
+                    self.__styleChange(key, value, origValue);
+                };
+
+                //style.addEventListener("propertychange", function (e) {
+                //    self.__styleChange(e.key, e.value, e.origValue);
+                //});
+
                 this.__style__ = style;
             }
             return this.__style__;
@@ -359,7 +366,7 @@ define(function (require, exports, module) {
         setAttribute: function (name, value) {
             switch (name.toLowerCase()) {
             case "class":
-                this.setAttribute("className", value);
+                this.className = value;
                 break;
             case "style":
                 this.style.cssText = value;
@@ -375,7 +382,8 @@ define(function (require, exports, module) {
         dispatchEvent: function (event) {
             //console.log(this.__native_tag__ + ":[" + this.tagName + "]" + event.type);
             var ret;
-            ret = this._super(event);
+            //ret = this._super(event);
+            ret = _super.dispatchEvent.call(this, event);
             if (!event.propagationStoped && this.parentNode !== null) {
                 ret = this.parentNode.dispatchEvent(event);
             }

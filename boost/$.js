@@ -3,6 +3,7 @@ define(function (require, exports, module) {
     "use strict";
 
     var type = require("base/type");
+    var assert = require("base/assert");
     var derive = require("base/derive");
     var isFunction = require("base/isFunction");
     var boost = require("boost/boost");
@@ -152,6 +153,13 @@ define(function (require, exports, module) {
             } else {
                 return this[0].value;
             }
+        },
+
+        css: function (key, value) {
+            assert(arguments.length > 1, "目前只支持 css(key, value)");
+            return this.each(function (idx, element) {
+                element.style[key] = value;
+            });
         }
     };
 
@@ -185,7 +193,7 @@ define(function (require, exports, module) {
         options: {},
         _create: noop,
         _init: noop,
-        _trigger: function (type, origEvent, data) {
+        _trigger: function (type, data) {
             type = this.widgetName + ':' + type;
             data = data || {};
             this.$element.trigger(type, data);

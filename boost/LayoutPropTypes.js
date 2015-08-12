@@ -2,8 +2,8 @@ define(function (require, exports, module) {
     "use strict";
 
     var StyleSheet = require("boost/StyleSheet");
+    var validator = require("boost/validator");
 
-    var validator = StyleSheet.validator;
     var number = validator.number;
     var dp = validator.dp;
     var _enum = validator.oneOf;

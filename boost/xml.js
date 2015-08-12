@@ -8,8 +8,10 @@ define(function (require, exports, module) {
     var copyProperties = require("base/copyProperties");
     var boost = require("boost/boost");
     var Text = require("boost/Text");
+    var TextInput = require("boost/TextInput");
     var EventTarget = require("boost/EventTarget");
     var Event = require("boost/Event");
+    var nativeGlobal = require("boost/NativeObject").global;
 
     function onStateChanged() {
         if (this.readyState == 4) {
@@ -32,46 +34,46 @@ define(function (require, exports, module) {
     }
 
     function process(document) {
-        console.log(document);
-        //processElement(document.documentElement, boost.rootElement);
+        console.log("process:", document);
         walkElement(document.documentElement, boost.documentElement);
         applyStyle();
-
         var event = new Event(xml, "domready");
         xml.dispatchEvent(event);
-        //boost.dispatchEvent();
     }
 
 
     function processElement(element, nativeParentElement) {
+        var nodeType;
         var str;
         var nativeElement;
         var attributes;
         var attribute;
         var count;
         var index;
-        if (element.nodeType === 3) {
-            str = trim(element.nodeValue);
-            if (str) {
-                assert(nativeParentElement instanceof Text, "文本只能添加到 <Text> 节点中");
-                nativeParentElement.value += str;
-            }
-        } else if (element.nodeType === 1) {
-            switch (element.tagName.toUpperCase()) {
-            case "STYLE":
-                parseStyle(element.firstChild.nodeValue);
-                break;
-            default:
-                nativeElement = boost.createElement(element.tagName);
-                attributes = element.attributes;
-                count = attributes.length;
-                for (index = 0; index < count; index++) {
-                    attribute = attributes[index];
-                    nativeElement.setAttribute(attribute.name, attribute.value);
-                }
 
+
+        var tagName = element.tagName.toUpperCase();
+        switch (tagName) {
+        case "STYLE":
+            parseStyle(element.firstChild.nodeValue);
+            break;
+        case "FLUSH":
+            nativeGlobal.test();
+            break;
+        default:
+            nativeElement = boost.createElement(element.tagName);
+            nativeParentElement.appendChild(nativeElement);
+            attributes = element.attributes;
+            count = attributes.length;
+            for (index = 0; index < count; index++) {
+                attribute = attributes[index];
+                nativeElement.setAttribute(attribute.name, attribute.value);
+            }
+
+            if (tagName === "TEXT" || tagName === "TEXTINPUT") {
+                nativeElement.value = element.firstChild.nodeValue;
+            } else {
                 walkElement(element, nativeElement);
-                nativeParentElement.appendChild(nativeElement);
             }
         }
     }
@@ -79,7 +81,7 @@ define(function (require, exports, module) {
     function walkElement(element, nativeParentElement) {
         var child;
         var tag;
-        for (child = element.firstChild; child !== null; child = child.nextSibling) {
+        for (child = element.firstElementChild; child !== null; child = child.nextElementSibling) {
             processElement(child, nativeParentElement);
         }
     }
@@ -203,8 +205,10 @@ define(function (require, exports, module) {
             for (index = 0; index < count; index++) {
                 item = list[index];
                 parts = item.split(":");
-                key = toCamelCase(trim(parts[0]));
-                ret[key] = trim(parts[1]);
+                if (parts.length > 1) {
+                    key = toCamelCase(trim(parts[0]));
+                    ret[key] = trim(parts[1]);
+                }
             }
             return ret;
         },
@@ -213,8 +217,6 @@ define(function (require, exports, module) {
         }
     });
 
-    //loadFromURL("test/cart.xml");
-    //loadFromString(getXml("cartXml"));
     var xml = new EventTarget();
     xml.loadFromURL = loadFromURL;
     xml.loadFromString = loadFromString;

@@ -5,10 +5,12 @@ define(function (require, exports, module) {
     var NativeElement = require("boost/NativeElement");
     var LayoutStyle = require("boost/LayoutStyle");
 
-    var NATIVE_VIEW_TYPE = "WrappedImageView";
+    //var NATIVE_VIEW_TYPE = "WrappedImageView";
+    var NATIVE_VIEW_TYPE = 2;
 
     var Image = derive(NativeElement, function () {
-        this._super(NATIVE_VIEW_TYPE, "Image");
+        //this._super(NATIVE_VIEW_TYPE, "Image");
+        NativeElement.call(this, NATIVE_VIEW_TYPE, "Image");
     }, {
         __getStyle: function () {
             return new LayoutStyle();

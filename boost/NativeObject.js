@@ -10,7 +10,8 @@ define(function (require, exports, module) {
     var NativeObject = derive(EventTarget, function (tag) {
         var origObj;
 
-        this._super();
+        //this._super();
+        EventTarget.call(this);
         if (tag === undefined) {
             tag = tagMap.genTag();
         }
@@ -46,18 +47,22 @@ define(function (require, exports, module) {
         };
     };
 
-    var GLOBAL_TAG = "";
+    var GLOBAL_TAG = null;
     var NativeGlobalObject = derive(NativeObject, function () {
-        this._super(GLOBAL_TAG);
+        //this._super(GLOBAL_TAG);
+        NativeObject.call(this, GLOBAL_TAG);
     }, {
         createView: NativeObject.bindNative("createView"),
         updateView: NativeObject.bindNative("updateView"),
         addView: NativeObject.bindNative("addView"),
         removeView: NativeObject.bindNative("removeView"),
-        removeAllViews: NativeObject.bindNative("removeAllViews"),
-
         createAnimation: NativeObject.bindNative("createAnimation"),
-        __destroy: NativeObject.bindNative("destroy"),
+        startAnimation: NativeObject.bindNative("startAnimation"),
+        cancelAnimation: NativeObject.bindNative("cancelAnimation"),
+        //FOR TEST
+        test: NativeObject.bindNative("test"),
+
+        //__destroy: NativeObject.bindNative("destroy"),
         destroyObject: function (tag) {
             this.__destroy(tag);
         }
@@ -79,9 +84,14 @@ define(function (require, exports, module) {
         var origin = e.origin;
         var target = NativeObject.getByTag(origin);
         var type = e.boostEventType.toLowerCase();
+        //console.log("origin:" + origin, "type:" + type, e);
         if (target) {
             // 这里为了提高效率，就不用 dispatchEvent 那一套了。
             target.__onEvent(type, e);
+        } else if (type === "boosterror") {
+            console.error(e.stack);
+            //TODO 构建错误显示界面
+            //throw new NativeError(e.stack);
         }
         /*
         var event;

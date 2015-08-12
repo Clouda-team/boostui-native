@@ -5,7 +5,8 @@ define(function (require, exports, module) {
     var Event = require("boost/Event");
 
     var TouchEvent = derive(Event, function (target, type, x, y) {
-        this._super(target, type);
+        //this._super(target, type);
+        Event.call(this, target, type);
         this.__x__ = x;
         this.__y__ = y;
     }, {

@@ -17,6 +17,9 @@ define(function (require, exports, module) {
             //assert(false, "Slider 不支持 style 属性");
             return new LayoutStyle();
         },
+        closeSlider: function () {
+            this.nativeObject.__callNative("closeSlider", []);
+        },
         "get maxSlideWidth": function () {
             return this.__config__.maxSlideWidth || 0;
         },

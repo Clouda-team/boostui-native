@@ -71,7 +71,9 @@ define(function (require, exports, module) {
             }
 
             if (tagName === "TEXT" || tagName === "TEXTINPUT") {
-                nativeElement.value = element.firstChild.nodeValue;
+                if (element.firstChild !== null) {
+                    nativeElement.value = element.firstChild.nodeValue;
+                }
             } else {
                 walkElement(element, nativeElement);
             }

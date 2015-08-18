@@ -79,7 +79,12 @@ define(function (require, exports, module) {
             proto["set " + key] = function (value) {
                 var origValue = this.__styleProps__[key];
                 var event;
-                value = validator(value);
+                
+                //TODO @ls: 确认对删除样式的实现方式
+                if (value !== null) {
+                    value = validator(value);
+                }
+
                 if (value !== origValue) {
                     this.__styleProps__[key] = value;
                     //改为直接的函数调用，提高性能

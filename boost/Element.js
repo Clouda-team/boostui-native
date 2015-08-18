@@ -240,6 +240,7 @@ define(function (require, exports, module) {
         },
         __parentSelect: function (selector) {
             var results = null;
+            selector = trim(selector);
             var match = rquickExpr.exec(selector);
             var m;
 

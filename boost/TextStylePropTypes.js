@@ -27,7 +27,8 @@ define(function (require, exports, module) {
         //"textDecorationColor": string,
         //"textDecorationLine": _enum("none", 'underline', 'line-through', 'underline line-through'),
         //"textDecorationStyle": _enum("solid", 'double', 'dotted', 'dashed'),
-        "writingDirection": _enum("auto", 'ltr', 'rtl')
+        "writingDirection": _enum("auto", 'ltr', 'rtl'),
+        "textDecoration": _enum("none", "underline", "line-through")
     });
 
     module.exports = TextStylePropTypes;

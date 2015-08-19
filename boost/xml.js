@@ -70,10 +70,10 @@ define(function (require, exports, module) {
                 nativeElement.setAttribute(attribute.name, attribute.value);
             }
 
-            if (tagName === "TEXT") {
-                nativeElement.value = element.firstChild.nodeValue;
-            } else if (tagName === "TEXTINPUT") {
-                nativeElement.value = element.firstChild ? element.firstChild.nodeValue : '';
+            if (tagName === "TEXT" || tagName === "TEXTINPUT") {
+                if (element.firstChild !== null) {
+                    nativeElement.value = element.firstChild.nodeValue;
+                }
             } else {
                 walkElement(element, nativeElement);
             }

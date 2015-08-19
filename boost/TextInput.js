@@ -6,6 +6,7 @@ define(function (require, exports, module) {
     var TextStylePropTypes = require("boost/TextStylePropTypes");
     var StyleSheet = require("boost/StyleSheet");
     var validator = require("boost/validator");
+    var FocusEvent = require("boost/FocusEvent");
 
     //var NATIVE_VIEW_TYPE = "WrappedEditText";
     var NATIVE_VIEW_TYPE = 5;
@@ -18,6 +19,21 @@ define(function (require, exports, module) {
     }, {
         __getStyle: function () {
             return new TextStyle();
+        },
+        __onEvent: function (type, e) {
+            var event;
+            switch (type) {
+            case "focus":
+            case "blur":
+                event = new FocusEvent(this, type);
+                this.dispatchEvent(event);
+                break;
+            case "change":
+                this.__config__.value = e.text;
+                break;
+            default:
+                console.log("unknow event:" + type, e);
+            }
         },
         "get value": function () {
             return this.__config__.value || "";
@@ -44,7 +60,16 @@ define(function (require, exports, module) {
             this.__update("password", validator.boolean(value));
         },
         "set keyboardType": function (value) {
-            this.__update("keyboardType", value);
+            this.__update("keyboardType", validator.string(value));
+        },
+        "set numberOfLines": function (value) {
+            this.__update("numberOfLines", validator.number(value));
+        },
+        "set placeholder": function (value) {
+            this.__update("placeholder", validator.string(value));
+        },
+        "set placeholderTextColor": function (value) {
+            this.__update("placeholderTextColor", validator.color(value));
         }
     });
     module.exports = TextInput;

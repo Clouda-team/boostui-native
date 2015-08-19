@@ -46,7 +46,7 @@ define(function (require, exports, module) {
             var cmd = [];
             var viewTag;
             var config;
-            var methodId;
+            var methodIdOrName;
             // 对createView、updateView 等做优化 
             if (tag === null) {
                 switch (method) {
@@ -91,11 +91,12 @@ define(function (require, exports, module) {
             if (tag !== null) {
                 cmd.push(tag);
             }
-            methodId = methodList.indexOf(method);
-            if (methodId < 0) {
-                throw new Error("Native 不支持此方法或者为绑定");
+            methodIdOrName = methodList.indexOf(method);
+            if (methodIdOrName < 0) {
+                methodIdOrName = method;
+                //throw new Error("Native 不支持此方法或者未绑定");
             }
-            cmd.push(methodId);
+            cmd.push(methodIdOrName);
             cmd.push(args);
             queue.push(cmd);
         }

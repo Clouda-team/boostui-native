@@ -118,8 +118,10 @@ define(function (require, exports, module) {
                     elem.setAttribute(key, value);
                 });
                 return this;
-            } else {
+            } else if (this.length > 0) {
                 return this[0].getAttribute(key);
+            } else {
+                return null;
             }
         },
 
@@ -149,8 +151,10 @@ define(function (require, exports, module) {
                 return this.each(function (idx, element) {
                     element.value = value;
                 });
-            } else {
+            } else if (this.length > 0) {
                 return this[0].value;
+            } else {
+                return null;
             }
         },
 

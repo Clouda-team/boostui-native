@@ -14,21 +14,21 @@ define(function (require, exports, module) {
     var _enum = validator.oneOf;
 
     var TextStylePropTypes = StyleSheet.createPropTypes(LayoutPropTypes, {
-        "color": color,
+        "color": [color, "black"],
         //"fontFamily": string,
-        "backgroundColor": color, //
-        "fontFamily": font,
-        "fontSize": number,
-        "fontStyle": _enum('normal', 'italic'),
-        "fontWeight": _enum("normal", 'bold', '100', '200', '300', '400', '500', '600', '700', '800', '900'),
-        "letterSpacing": number,
-        "lineHeight": dp,
-        "textAlign": _enum("auto", 'left', 'right', 'center', 'justify'),
-        //"textDecorationColor": string,
-        //"textDecorationLine": _enum("none", 'underline', 'line-through', 'underline line-through'),
-        //"textDecorationStyle": _enum("solid", 'double', 'dotted', 'dashed'),
-        "writingDirection": _enum("auto", 'ltr', 'rtl'),
-        "textDecoration": _enum("none", "underline", "line-through")
+        "backgroundColor": [color, "transparent"],
+        "fontFamily": [font, "sans-serif"],
+        "fontSize": [number, 14],
+        "fontStyle": [_enum('normal', 'italic'), "normal"],
+        "fontWeight": [_enum("normal", 'bold', '100', '200', '300', '400', '500', '600', '700', '800', '900'), "normal"],
+        "letterSpacing": [number, null], //TODO: 未在native代码中找到相应属性
+        "lineHeight": [dp, 0], //TODO: ok?
+        "textAlign": [_enum("auto", 'left', 'right', 'center', 'justify'), "auto"],
+        //"textDecorationColor": [string, "black"],
+        //"textDecorationLine": [_enum("none", 'underline', 'line-through', 'underline line-through'), "none"],
+        //"textDecorationStyle": [_enum("solid", 'double', 'dotted', 'dashed'), "solid"],
+        "writingDirection": [_enum("auto", 'ltr', 'rtl'), "ltr"],
+        "textDecoration": [_enum("none", "underline", "line-through"), "none"]
     });
 
     module.exports = TextStylePropTypes;

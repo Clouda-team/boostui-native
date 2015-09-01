@@ -68,7 +68,9 @@ define(function (require, exports, module) {
 
         config = arguments[index];
 
-        each(config, function (validator, key) {
+        each(config, function (array, key) {
+            var validator = array[0];
+            var defaultValue = array[1];
 
             //为了性能，直接从 __styleProps__ 获取值
             //proto["get " + key] = function () {
@@ -80,9 +82,11 @@ define(function (require, exports, module) {
                 var origValue = this.__styleProps__[key];
                 var event;
                 
-                //TODO @ls: 确认对删除样式的实现方式
                 if (value !== null) {
                     value = validator(value);
+                } else {
+                    //清除样式
+                    value = defaultValue;
                 }
 
                 if (value !== origValue) {

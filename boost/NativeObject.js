@@ -5,7 +5,7 @@ define(function (require, exports, module) {
     var slice = require("base/slice");
     var EventTarget = require("boost/EventTarget");
     var tagMap = require("boost/tagMap");
-    var queue = require("boost/bridge");
+    var bridge = require("boost/bridge");
 
     var NativeObject = derive(EventTarget, function (tag) {
         var origObj;
@@ -29,7 +29,7 @@ define(function (require, exports, module) {
         },
 
         __callNative: function (method, args) {
-            queue.call(this.__tag__, method, args);
+            bridge.call(this.__tag__, method, args);
         },
 
         __onEvent: function (type, event) {
@@ -56,6 +56,7 @@ define(function (require, exports, module) {
         updateView: NativeObject.bindNative("updateView"),
         addView: NativeObject.bindNative("addView"),
         removeView: NativeObject.bindNative("removeView"),
+        removeAllViews: NativeObject.bindNative("removeAllViews"),
         createAnimation: NativeObject.bindNative("createAnimation"),
         startAnimation: NativeObject.bindNative("startAnimation"),
         cancelAnimation: NativeObject.bindNative("cancelAnimation"),
@@ -80,6 +81,7 @@ define(function (require, exports, module) {
     };
 
 
+    // 监听统一的 boost 事件
     document.addEventListener("boost", function (e) {
         var origin = e.origin;
         var target = NativeObject.getByTag(origin);
@@ -93,24 +95,16 @@ define(function (require, exports, module) {
             //TODO 构建错误显示界面
             //throw new NativeError(e.stack);
         }
-        /*
-        var event;
-        if (target) {
-            switch (type) {
-            case "touchstart":
-            case "touchend":
-                event = new TouchEvent(type, target, e.x, e.y);
-                target.dispatchEvent(event);
-                break;
-            default:
-                console.log(e);
-                return;
-            }
-
-        }
-       */
     }, false);
 
-    module.exports = NativeObject;
+    // 页面卸载时,删除所有的 NativeView
+    window.addEventListener("unload", function (e) {
+        nativeGlobal.removeAllViews();
+        bridge.flush();
+    });
 
+    // 页面加载时，先尝试删除所有 NativeView
+    nativeGlobal.removeAllViews();
+
+    module.exports = NativeObject;
 });

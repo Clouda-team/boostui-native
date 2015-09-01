@@ -38,10 +38,17 @@ define(function (require, exports, module) {
             waiting = false;
         }
 
+
+        function flush() {
+            clearTimeout(timeFlag);
+            call();
+        }
+
         return {
             push: push,
             run: run,
-            stop: stop
+            stop: stop,
+            flush: flush
         };
     }
 

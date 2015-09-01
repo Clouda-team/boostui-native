@@ -14,13 +14,14 @@ define(function (require, exports, module) {
         "createAnimation",
         "startAnimation",
         "cancelAnimation",
-        "test"
+        "removeAllViews"
     ];
 
     var queue = genQueue(function (list) {
         var cmdStr;
         cmdStr = JSON.stringify(list);
-        //console.log(JSON.stringify(list, null, 2));
+        //for test
+        console.log(JSON.stringify(list, null, 2));
         lc_bridge.callQueue(cmdStr);
         clearHeap();
     });
@@ -99,6 +100,9 @@ define(function (require, exports, module) {
             cmd.push(methodIdOrName);
             cmd.push(args);
             queue.push(cmd);
+        },
+        flush: function () {
+            queue.flush();
         }
     };
 

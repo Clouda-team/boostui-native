@@ -5,6 +5,7 @@ define(function (require, exports, module) {
     var NativeElement = require("boost/NativeElement");
     var TextStylePropTypes = require("boost/TextStylePropTypes");
     var StyleSheet = require("boost/StyleSheet");
+    var validator = require("boost/validator");
 
     //var NATIVE_VIEW_TYPE = "WrappedTextView";
     var NATIVE_VIEW_TYPE = 1;
@@ -23,6 +24,9 @@ define(function (require, exports, module) {
         },
         "set value": function (value) {
             this.__update("value", value);
+        },
+        "set numberOfLines": function (value) {
+            this.__update("numberOfLines", validator.number(value));
         }
     });
     module.exports = Text;

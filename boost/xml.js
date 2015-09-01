@@ -15,7 +15,7 @@ define(function (require, exports, module) {
 
     function onStateChanged() {
         if (this.readyState == 4) {
-            process(this.responseXML);
+            loadFromString(this.responseText);
         }
     }
 
@@ -54,6 +54,9 @@ define(function (require, exports, module) {
 
         var tagName = element.tagName.toUpperCase();
         switch (tagName) {
+        case "PARSERERROR":
+            console.error(element.innerText);
+            break;
         case "STYLE":
             parseStyle(element.firstChild.nodeValue);
             break;

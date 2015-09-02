@@ -59,6 +59,7 @@ define(function (require, exports, module) {
 
         color: (function () {
             var NAMEED_COLORS = {
+                "transparent": "#00000000",
                 "black": "#ff000000",
                 "silver": "#ffc0c0c0",
                 "gray": "#ff808080",

@@ -13,6 +13,7 @@ define(function (require, exports, module) {
     var Event = require("boost/Event");
     var nativeGlobal = require("boost/NativeObject").global;
     var webMap = require("boost/webMap");
+    var webDebugger = require('./webDebugger');
 
     function onStateChanged() {
         if (this.readyState == 4) {
@@ -78,7 +79,7 @@ define(function (require, exports, module) {
                 if (element.firstChild !== null) {
                     nativeElement.value = element.firstChild.nodeValue;
 
-                    if (webMap.inUse()) {
+                    if (webDebugger.isActive()) {
                         webMap.getWebElement(nativeElement).innerText = element.firstChild.nodeValue;
                     }
                 }

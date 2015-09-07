@@ -8,6 +8,7 @@ define(function (require, exports, module) {
     var trim = require("base/trim");
     var each = require("base/each");
     var webMap = require("boost/webMap");
+    var webDebugger = require('./webDebugger');
     var push = [].push;
 
     var _super = EventTarget.prototype;
@@ -25,7 +26,7 @@ define(function (require, exports, module) {
         "set id": function (value) {
             this.__id__ = value;
 
-            if (webMap.inUse()) {
+            if (webDebugger.isActive()) {
                 webMap.getWebElement(this).id = value;
             }
         },
@@ -47,7 +48,7 @@ define(function (require, exports, module) {
             }
             this.__classList__ = classList;
 
-            if (webMap.inUse()) {
+            if (webDebugger.isActive()) {
                 webMap.getWebElement(this).className = value;
             }
         },
@@ -129,12 +130,12 @@ define(function (require, exports, module) {
         __styleChange: function (key, value, origValue) {
             // do nothing
 
-            if (webMap.inUse()) {
+            if (webDebugger.isActive()) {
                 var webValue;
                 if (value === "UNDEFINED") {
                     webValue = "auto";
                 } else if (typeof value === "number") {
-                    webValue = value + "px";
+                    webValue = value / window.devicePixelRatio + "px"; //TODO: 与dp中有强耦合~
                 } else {
                     webValue = value;
                 }
@@ -158,7 +159,7 @@ define(function (require, exports, module) {
         appendChild: function (child) {
             this.__addChildAt(child, this.__children__.length);
 
-            if (webMap.inUse()) {
+            if (webDebugger.isActive()) {
                 webMap.getWebElement(this).appendChild(webMap.getWebElement(child));
             }
             return child;
@@ -175,7 +176,7 @@ define(function (require, exports, module) {
             }
             this.__addChildAt(newNode, index);
 
-            if (webMap.inUse()) {
+            if (webDebugger.isActive()) {
                 var webElement = webMap.getWebElement(this);
                 var newWebElement = webMap.getWebElement(newNode);
                 var referenceWebElement = webMap.getWebElement(referenceNode);
@@ -191,7 +192,7 @@ define(function (require, exports, module) {
             }
             this.__removeChildAt(index);
 
-            if (webMap.inUse()) {
+            if (webDebugger.isActive()) {
                 var webElement = webMap.getWebElement(this);
                 var childWebElement = webMap.getWebElement(child);
                 webElement.removeChild(childWebElement);
@@ -210,7 +211,7 @@ define(function (require, exports, module) {
             this.childNodes.splice(index, 1, newChild);
             oldChild.__parent__ = null;
 
-            if (webMap.inUse()) {
+            if (webDebugger.isActive()) {
                 var webElement = webMap.getWebElement(this);
                 var newChildWebElement = webMap.getWebElement(newChild);
                 var oldChildWebElement = webMap.getWebElement(oldChild);
@@ -421,7 +422,7 @@ define(function (require, exports, module) {
             default:
                 this[name] = value;
 
-                if (webMap.inUse()) {
+                if (webDebugger.isActive()) {
                     var webElement = webMap.getWebElement(this);
                     if (webElement) { //注册中时可能没有相应webElement但webMap中却已经对其赋属性值
                         webElement.setAttribute(name, value);

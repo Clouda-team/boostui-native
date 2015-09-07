@@ -14,6 +14,7 @@ define(function (require, exports, module) {
     var ScrollView = require("boost/ScrollView");
     var Slider = require("boost/Slider");
     var webMap = require("boost/webMap");
+    var webDebugger = require('./webDebugger');
 
     var ROOT_ELEMENT_TAG = "tag_nativeview";
     var TAG_MAP = {
@@ -36,7 +37,7 @@ define(function (require, exports, module) {
             if (this.__docuemntElement__ === null) {
                 this.__docuemntElement__ = NativeElement.__rootElement;
 
-                if (webMap.inUse()) {
+                if (webDebugger.isActive()) {
                     webMap.set(this.__docuemntElement__, document.documentElement);
                 }
             }
@@ -47,7 +48,7 @@ define(function (require, exports, module) {
             assert(hasOwnProperty(this.__tagMap__, tagName), "unknow tag \"" + tagName + "\"");
             var element = new this.__tagMap__[tagName]();
 
-            if (webMap.inUse()) {
+            if (webDebugger.isActive()) {
                 var webElement = document.createElement(tagName);
                 webMap.set(element, webElement);
             }

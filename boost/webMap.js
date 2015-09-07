@@ -4,7 +4,7 @@ define(function (require, exports, module) {
     var derive = require("base/derive");
     var $ = require("boost/$");
     var assert = require("base/assert");
-    var ID_ATTR_NAME = "_i";
+    var ID_ATTR_NAME = "__tag__";
     var IN_USAGE_KEY = "web-debug";
     var inUse = !!localStorage.getItem(IN_USAGE_KEY); //非实时生效
 
@@ -15,7 +15,6 @@ define(function (require, exports, module) {
     var WebMap = derive(Object, {
         _boostMap: {},
         _webMap: {},
-        _curId: 0,
 
         inUse: function () {
             return inUse;
@@ -33,7 +32,7 @@ define(function (require, exports, module) {
         set: function (boostElement, webElement) {
             assert(this.inUse(), "should not use webMap when inUse() === false");
 
-            var id = ++this._curId;
+            var id = boostElement.tag;
 
             this._markId(boostElement, id);
             this._boostMap[id] = boostElement;

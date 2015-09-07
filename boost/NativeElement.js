@@ -24,6 +24,9 @@ define(function (require, exports, module) {
         "get nativeObject": function () {
             return this.__native__;
         },
+        "get tag": function () {
+            return this.__native__.tag;
+        },
         __createView: function (type, config) {
             var self = this;
             var nativeObj = this.__native__ = new NativeObject();

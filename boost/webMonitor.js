@@ -22,35 +22,60 @@ define(function (require, exports, module) {
         start: function () {
             assert(this._setIntervalHandle === null, "already been started");
 
-            this._setIntervalHandle = setInterval(this.sync.bind(this), INTERVAL);
-        },
-
-        sync: function () {
             var self = this;
-            var webMap = require("boost/webMap"); //因为有循环依赖，需在此使用时重新require
-            webMap.getAllWebElements().forEach(function (webElement) {
-                var tagName = webElement.tagName.toUpperCase();
-                var boostElement = webMap.getBoostElement(webElement);
 
-                if (tagName === "TEXT" || tagName === "TEXTINPUT") {
-                    boostElement.value = webElement.innerHTML; //innerText can't get value~
-                }
-
-                boostElement.className = webElement.className; //FIXME: can't trigger style update
-
-                var styleText = webElement.getAttribute("style");
-                if (styleText) {
-                    var styleList = styleText.split(";");
-                    styleList = styleList.filter(function (styleItem) { return styleItem.trim().length > 0; });
-                    styleList.forEach(function (styleItem) {
-                        var tempArray = styleItem.split(":");
-                        self._handleRule(boostElement,  tempArray[0].trim(), tempArray[1].trim());
-                    });
-                }
+            var observer = new MutationObserver(function (records) {
+                records.forEach(function (record) {
+                    var webMap = require("boost/webMap"); //因为有循环依赖，需在此使用时重新require
+                    var webElement;
+                    var boostElement;
+                    switch (record.type) {
+                        case "attributes":
+                            webElement = record.target;
+                            boostElement = webMap.getBoostElement(webElement);
+                            if (record.attributeName === 'style') {
+                                self._handleStyle(boostElement, webElement.getAttribute("style"));
+                            } else if (record.attributeName === "class") {
+                                if (boostElement.className !== webElement.className) { //FIXME: can't trigger style update by className
+                                    boostElement.className = webElement.className; //此句赋值也会触发observer，如不判断会导致死循环
+                                }
+                            } else {
+                                boostElement.setAttribute(record.attributeName, webElement.getAttribute("style"));
+                            }
+                            break;
+                        case "characterData":
+                            webElement = record.target.parentElement;
+                            boostElement = webMap.getBoostElement(webElement);
+                            var tagName = webElement.tagName.toUpperCase();
+                            if (tagName === "TEXT" || tagName === "TEXTINPUT") {
+                                boostElement.value = webElement.innerHTML; //innerText can't get value~
+                            }
+                            break;
+                        default:
+                            //TODO
+                            break;
+                    }
+                });
+            });
+            observer.observe(document.documentElement, {
+                childList: true,
+                attributes: true,
+                characterData: true,
+                subtree: true
             });
         },
 
-        _handleRule: function (boostElement, styleName, styleValue) {
+        _handleStyle: function(boostElement, styleText) {
+            var self = this;
+            var styleList = styleText.split(";");
+            styleList = styleList.filter(function (styleItem) { return styleItem.trim().length > 0; });
+            styleList.forEach(function (styleItem) {
+                var tempArray = styleItem.split(":");
+                self._handleStyleItem(boostElement,  tempArray[0].trim(), tempArray[1].trim());
+            });
+        },
+
+        _handleStyleItem: function (boostElement, styleName, styleValue) {
             var keyMap = {
                 "margin": [
                     'margin-top',

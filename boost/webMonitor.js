@@ -9,7 +9,12 @@ define(function (require, exports, module) {
     var $ = require("boost/$");
     var assert = require("base/assert");
     require("boost/webMap");
-    var INTERVAL = 1000;
+    var INTERVAL = 30;
+    function toCamelCase(str) { //TODO: move to base/
+        return str.replace(/-+(.)?/g, function (match, chr) {
+            return chr ? chr.toUpperCase() : '';
+        });
+    }
 
     var WebMonitor = derive(Object, {
         _setIntervalHandle: null,
@@ -46,22 +51,68 @@ define(function (require, exports, module) {
         },
 
         _handleRule: function (boostElement, styleName, styleValue) {
+            var keyMap = {
+                "margin": [
+                    'margin-top',
+                    'margin-right',
+                    'margin-bottom',
+                    'margin-left'
+                ],
+                "padding": [
+                    'padding-top',
+                    'padding-right',
+                    'padding-bottom',
+                    'padding-left'
+                ],
+                "border-width": [
+                    'border-top-width',
+                    'border-right-width',
+                    'border-bottom-width',
+                    'border-left-width'
+                ],
+                "border-color": [
+                    'border-top-color',
+                    'border-right-color',
+                    'border-bottom-color',
+                    'border-left-color'
+                ]
+            };
             switch (styleName) {
                 case "margin":
                 case "padding":
                 case "border-width":
                 case "border-color":
-                    //TODO
+                    var subStyleValues = styleValue.split(/\s+/);
+                    if (subStyleValues.length === 1) {
+                        subStyleValues.push(subStyleValues[0]); //right
+                        subStyleValues.push(subStyleValues[0]); //bottom
+                        subStyleValues.push(subStyleValues[0]); //left
+                    } else if (subStyleValues.length === 2) {
+                        subStyleValues.push(subStyleValues[0]); //bottom
+                        subStyleValues.push(subStyleValues[1]); //left
+                    } else if (subStyleValues.length === 3) {
+                        subStyleValues.push(subStyleValues[1]); //left
+                    }
+                    keyMap[styleName].forEach(function (subStyleKey, index) {
+                        boostElement.style[webKeyToBoostKey(subStyleKey)] = webValueToBoostValue(subStyleValues[index]);
+                    });
                     break;
                 default :
-                    if (/^[\d\.]+px$/.test(styleValue)) {
-                        boostElement.style[styleName] = parseFloat(styleValue);
-                    } else if (styleValue === "auto") {
-                        boostElement.style[styleName] = null;
-                    } else {
-                        boostElement.style[styleName] = styleValue;
-                    }
+                    boostElement.style[webKeyToBoostKey(styleName)] = webValueToBoostValue(styleValue);
                     break;
+            }
+
+            function webValueToBoostValue (webValue) {
+                if (/^(?:\-)?[\d\.]+px$/.test(webValue)) {
+                    return parseFloat(webValue);
+                } else if (webValue === "auto") {
+                    return null;
+                } else {
+                    return webValue;
+                }
+            }
+            function webKeyToBoostKey (webKey) {
+                return toCamelCase(webKey);
             }
         }
     });

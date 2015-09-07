@@ -130,7 +130,16 @@ define(function (require, exports, module) {
             // do nothing
 
             if (webMap.inUse()) {
-                webMap.getWebElement(this).style[key] = typeof value === "number" ? value + "px" : value;
+                var webValue;
+                if (value === "UNDEFINED") {
+                    webValue = "auto";
+                } else if (typeof value === "number") {
+                    webValue = value + "px";
+                } else {
+                    webValue = value;
+                }
+
+                webMap.getWebElement(this).style[key] =  webValue;
             }
         },
         __addChildAt: function (child, index) {

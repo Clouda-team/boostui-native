@@ -48,7 +48,7 @@ define(function (require, exports, module) {
             assert(hasOwnProperty(this.__tagMap__, tagName), "unknow tag \"" + tagName + "\"");
             var element = new this.__tagMap__[tagName]();
 
-            if (webDebugger.isActive()) {
+            if (webDebugger.isActive() && !webDebugger.doNotUpdateWeb) {
                 var webElement = document.createElement(tagName);
                 webMap.set(element, webElement);
             }

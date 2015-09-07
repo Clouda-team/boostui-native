@@ -6,21 +6,12 @@ define(function (require, exports, module) {
     var assert = require("base/assert");
     var each = require("base/each");
     var webDebugger = require('./webDebugger');
-    var ID_ATTR_NAME = "__tag__";
-    var IN_USAGE_KEY = "web-debug";
-    var inUse = !!localStorage.getItem(IN_USAGE_KEY); //非实时生效
-
-    if (inUse) {
-        document.documentElement.style.visibility = 'hidden';
-    }
+    var ID_ATTR_NAME = "_tag";
 
     var WebMap = derive(Object, {
         _boostMap: {},
         _webMap: {},
 
-        inUse: function () {
-            return inUse;
-        },
         getBoostElement: function (webElement) {
             assert(webDebugger.isActive(), "should not use webMap when inUse() === false");
 
@@ -37,10 +28,10 @@ define(function (require, exports, module) {
 
             var id = boostElement.tag;
 
-            this._markId(boostElement, id);
+            this._markId(boostElement, id, "boost");
             this._boostMap[id] = boostElement;
 
-            this._markId(webElement, id);
+            this._markId(webElement, id, "web");
             this._webMap[id] = webElement;
         },
 
@@ -57,8 +48,15 @@ define(function (require, exports, module) {
         _getId: function (element) {
             return element.getAttribute(ID_ATTR_NAME);
         },
-        _markId: function (element, id) {
-            element.setAttribute(ID_ATTR_NAME, id);
+        _markId: function (element, id, type) {
+            if (type === "web") {
+                webDebugger.doNotUpdateBoostOnce = true;
+                element.setAttribute(ID_ATTR_NAME, id);
+            } else if (type === "boost") {
+                webDebugger.doNotUpdateWeb = true;
+                element.setAttribute(ID_ATTR_NAME, id);
+                webDebugger.doNotUpdateWeb = false;
+            }
         }
     });
 

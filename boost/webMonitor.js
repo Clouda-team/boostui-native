@@ -8,7 +8,9 @@ define(function (require, exports, module) {
     var derive = require("base/derive");
     var $ = require("boost/$");
     var assert = require("base/assert");
+    var each = require("base/each");
     require("boost/webMap");
+    require("boost/webDebugger");
     var INTERVAL = 30;
     function toCamelCase(str) { //TODO: move to base/
         return str.replace(/-+(.)?/g, function (match, chr) {
@@ -24,7 +26,13 @@ define(function (require, exports, module) {
 
             var self = this;
 
+            var webDebugger = require("boost/webDebugger");
             var observer = new MutationObserver(function (records) {
+                if (webDebugger.doNotUpdateBoostOnce) {
+                    webDebugger.doNotUpdateBoostOnce = false;
+                    return; //avoid dead loop
+                }
+
                 records.forEach(function (record) {
                     var webMap = require("boost/webMap"); //因为有循环依赖，需在此使用时重新require
                     var webElement;
@@ -36,11 +44,13 @@ define(function (require, exports, module) {
                             if (record.attributeName === 'style') {
                                 self._handleStyle(boostElement, webElement.getAttribute("style"));
                             } else if (record.attributeName === "class") {
-                                if (boostElement.className !== webElement.className) { //FIXME: can't trigger style update by className
-                                    boostElement.className = webElement.className; //此句赋值也会触发observer，如不判断会导致死循环
-                                }
+                                webDebugger.doNotUpdateWeb = true;
+                                boostElement.className = webElement.className; //FIXME: can't trigger style update by className
+                                webDebugger.doNotUpdateWeb = false;
                             } else {
-                                boostElement.setAttribute(record.attributeName, webElement.getAttribute("style"));
+                                webDebugger.doNotUpdateWeb = true;
+                                boostElement.setAttribute(record.attributeName, webElement.getAttribute(record.attributeName));
+                                webDebugger.doNotUpdateWeb = false;
                             }
                             break;
                         case "characterData":
@@ -48,11 +58,40 @@ define(function (require, exports, module) {
                             boostElement = webMap.getBoostElement(webElement);
                             var tagName = webElement.tagName.toUpperCase();
                             if (tagName === "TEXT" || tagName === "TEXTINPUT") {
+                                webDebugger.doNotUpdateWeb = true;
                                 boostElement.value = webElement.innerHTML; //innerText can't get value~
+                                webDebugger.doNotUpdateWeb = false;
                             }
                             break;
-                        default:
-                            //TODO
+                        case "childList":
+                            webElement = record.target;
+                            boostElement = webMap.getBoostElement(webElement);
+
+                            each(record.removedNodes, function (removedNode) {
+                                var removedBoostElement = webMap.getBoostElement(removedNode);
+                                webDebugger.doNotUpdateWeb = true;
+                                boostElement.removeChild(removedBoostElement); //but do not destroy, for maybe is move/cut
+                                webDebugger.doNotUpdateWeb = false;
+                            });
+
+                            each(record.addedNodes, function (addedNode) {
+                                var addedBoostNode = webMap.getBoostElement(addedNode);
+                                if (!addedBoostNode) {
+                                    //对于新增加的元素，boost新建时即会调web新建。但web新建时无法捕获，在被添加时再新建并添加
+                                    //TODO 看新建与属性更新是否会派发多个record？
+                                    //TODO
+                                    debugger;
+                                }
+                                if (record.nextSibling) {
+                                    webDebugger.doNotUpdateWeb = true;
+                                    boostElement.insertBefore(addedBoostNode, webMap.getBoostElement(record.nextSibling));
+                                    webDebugger.doNotUpdateWeb = false;
+                                } else {
+                                    webDebugger.doNotUpdateWeb = true;
+                                    boostElement.appendChild(addedBoostNode);
+                                    webDebugger.doNotUpdateWeb = false;
+                                }
+                            });
                             break;
                     }
                 });
@@ -102,6 +141,7 @@ define(function (require, exports, module) {
                     'border-left-color'
                 ]
             };
+            var webDebugger = require("boost/webDebugger");
             switch (styleName) {
                 case "margin":
                 case "padding":
@@ -118,12 +158,16 @@ define(function (require, exports, module) {
                     } else if (subStyleValues.length === 3) {
                         subStyleValues.push(subStyleValues[1]); //left
                     }
+                    webDebugger.doNotUpdateWeb = true;
                     keyMap[styleName].forEach(function (subStyleKey, index) {
                         boostElement.style[webKeyToBoostKey(subStyleKey)] = webValueToBoostValue(subStyleValues[index]);
                     });
+                    webDebugger.doNotUpdateWeb = false;
                     break;
                 default :
+                    webDebugger.doNotUpdateWeb = true;
                     boostElement.style[webKeyToBoostKey(styleName)] = webValueToBoostValue(styleValue);
+                    webDebugger.doNotUpdateWeb = false;
                     break;
             }
 
@@ -139,6 +183,16 @@ define(function (require, exports, module) {
             function webKeyToBoostKey (webKey) {
                 return toCamelCase(webKey);
             }
+        },
+
+        _hasChild: function (parent, child) {
+            var has = false;
+            each(parent.childNodes, function (each) {
+                if (each === child) {
+                    has = true;
+                }
+            });
+            return has;
         }
     });
 

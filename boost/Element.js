@@ -26,7 +26,8 @@ define(function (require, exports, module) {
         "set id": function (value) {
             this.__id__ = value;
 
-            if (webDebugger.isActive()) {
+            if (webDebugger.isActive() && !webDebugger.doNotUpdateWeb) {
+                webDebugger.doNotUpdateBoostOnce = true;
                 webMap.getWebElement(this).id = value;
             }
         },
@@ -48,7 +49,8 @@ define(function (require, exports, module) {
             }
             this.__classList__ = classList;
 
-            if (webDebugger.isActive()) {
+            if (webDebugger.isActive() && !webDebugger.doNotUpdateWeb) {
+                webDebugger.doNotUpdateBoostOnce = true;
                 webMap.getWebElement(this).className = value;
             }
         },
@@ -130,7 +132,7 @@ define(function (require, exports, module) {
         __styleChange: function (key, value, origValue) {
             // do nothing
 
-            if (webDebugger.isActive()) {
+            if (webDebugger.isActive() && !webDebugger.doNotUpdateWeb) {
                 var webValue;
                 if (value === "UNDEFINED") {
                     webValue = "auto";
@@ -140,7 +142,8 @@ define(function (require, exports, module) {
                     webValue = value;
                 }
 
-                webMap.getWebElement(this).style[key] =  webValue;
+                webDebugger.doNotUpdateBoostOnce = true;
+                webMap.getWebElement(this).style[key] = webValue;
             }
         },
         __addChildAt: function (child, index) {
@@ -159,8 +162,11 @@ define(function (require, exports, module) {
         appendChild: function (child) {
             this.__addChildAt(child, this.__children__.length);
 
-            if (webDebugger.isActive()) {
-                webMap.getWebElement(this).appendChild(webMap.getWebElement(child));
+            if (webDebugger.isActive() && !webDebugger.doNotUpdateWeb) {
+                var webElement = webMap.getWebElement(this);
+                var webChild = webMap.getWebElement(child);
+                webDebugger.doNotUpdateBoostOnce = true;
+                webElement.appendChild(webChild);
             }
             return child;
         },
@@ -176,10 +182,11 @@ define(function (require, exports, module) {
             }
             this.__addChildAt(newNode, index);
 
-            if (webDebugger.isActive()) {
+            if (webDebugger.isActive() && !webDebugger.doNotUpdateWeb) {
                 var webElement = webMap.getWebElement(this);
                 var newWebElement = webMap.getWebElement(newNode);
                 var referenceWebElement = webMap.getWebElement(referenceNode);
+                webDebugger.doNotUpdateBoostOnce = true;
                 webElement.insertBefore(newWebElement, referenceWebElement);
             }
             return newNode;
@@ -192,9 +199,10 @@ define(function (require, exports, module) {
             }
             this.__removeChildAt(index);
 
-            if (webDebugger.isActive()) {
+            if (webDebugger.isActive() && !webDebugger.doNotUpdateWeb) {
                 var webElement = webMap.getWebElement(this);
                 var childWebElement = webMap.getWebElement(child);
+                webDebugger.doNotUpdateBoostOnce = true;
                 webElement.removeChild(childWebElement);
             }
             return child;
@@ -211,10 +219,11 @@ define(function (require, exports, module) {
             this.childNodes.splice(index, 1, newChild);
             oldChild.__parent__ = null;
 
-            if (webDebugger.isActive()) {
+            if (webDebugger.isActive() && !webDebugger.doNotUpdateWeb) {
                 var webElement = webMap.getWebElement(this);
                 var newChildWebElement = webMap.getWebElement(newChild);
                 var oldChildWebElement = webMap.getWebElement(oldChild);
+                webDebugger.doNotUpdateBoostOnce = true;
                 webElement.replaceChild(newChildWebElement, oldChildWebElement);
             }
             return oldChild;
@@ -422,11 +431,10 @@ define(function (require, exports, module) {
             default:
                 this[name] = value;
 
-                if (webDebugger.isActive()) {
+                if (webDebugger.isActive() && !webDebugger.doNotUpdateWeb) {
                     var webElement = webMap.getWebElement(this);
-                    if (webElement) { //注册中时可能没有相应webElement但webMap中却已经对其赋属性值
-                        webElement.setAttribute(name, value);
-                    }
+                    webDebugger.doNotUpdateBoostOnce = true;
+                    webElement.setAttribute(name, value);
                 }
                 break;
             }

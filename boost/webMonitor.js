@@ -11,6 +11,7 @@ define(function (require, exports, module) {
     var each = require("base/each");
     require("boost/webMap");
     require("boost/webDebugger");
+    require("boost/boost");
     var INTERVAL = 30;
     function toCamelCase(str) { //TODO: move to base/
         return str.replace(/-+(.)?/g, function (match, chr) {
@@ -27,6 +28,7 @@ define(function (require, exports, module) {
             var self = this;
 
             var webDebugger = require("boost/webDebugger");
+            var boost = require("boost/boost");
             var observer = new MutationObserver(function (records) {
                 if (webDebugger.doNotUpdateBoostOnce) {
                     webDebugger.doNotUpdateBoostOnce = false;
@@ -75,12 +77,21 @@ define(function (require, exports, module) {
                             });
 
                             each(record.addedNodes, function (addedNode) {
+                                if (addedNode.nodeName === "#text") {
+                                    return; //文本节点不处理
+                                }
                                 var addedBoostNode = webMap.getBoostElement(addedNode);
                                 if (!addedBoostNode) {
-                                    //对于新增加的元素，boost新建时即会调web新建。但web新建时无法捕获，在被添加时再新建并添加
-                                    //TODO 看新建与属性更新是否会派发多个record？
-                                    //TODO
-                                    debugger;
+                                    //TODO: 改为直接从xml解析一个html片断（含子元素、value、样式应用的处理等）
+                                    webDebugger.doNotUpdateWeb = true;
+                                    addedBoostNode = boost.createElement(addedNode.tagName);
+                                    webMap.set(addedBoostNode, addedNode);
+                                    //TODO: 使用与上面相同的逻辑来处理
+                                    each(addedNode.attributes, function (attr) {
+                                        addedBoostNode[attr.name] = attr.value;
+                                    });
+                                    addedBoostNode.value = addedNode.innerHTML;
+                                    webDebugger.doNotUpdateWeb = false;
                                 }
                                 if (record.nextSibling) {
                                     webDebugger.doNotUpdateWeb = true;
@@ -108,6 +119,7 @@ define(function (require, exports, module) {
             var self = this;
             var styleList = styleText.split(";");
             styleList = styleList.filter(function (styleItem) { return styleItem.trim().length > 0; });
+            //TODO: 注释、删除样式的处理（对比oldValue?）
             styleList.forEach(function (styleItem) {
                 var tempArray = styleItem.split(":");
                 self._handleStyleItem(boostElement,  tempArray[0].trim(), tempArray[1].trim());

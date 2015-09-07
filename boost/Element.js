@@ -7,6 +7,7 @@ define(function (require, exports, module) {
     var StyleSheet = require("boost/StyleSheet");
     var trim = require("base/trim");
     var each = require("base/each");
+    var webMap = require("boost/webMap");
     var push = [].push;
 
     var _super = EventTarget.prototype;
@@ -23,6 +24,10 @@ define(function (require, exports, module) {
     }, {
         "set id": function (value) {
             this.__id__ = value;
+
+            if (webMap.inUse()) {
+                webMap.getWebElement(this).id = value;
+            }
         },
         "get id": function () {
             return this.__id__;
@@ -41,6 +46,10 @@ define(function (require, exports, module) {
                 }
             }
             this.__classList__ = classList;
+
+            if (webMap.inUse()) {
+                webMap.getWebElement(this).className = value;
+            }
         },
         "get className": function () {
             return this.__className__;
@@ -119,6 +128,10 @@ define(function (require, exports, module) {
         },
         __styleChange: function (key, value, origValue) {
             // do nothing
+
+            if (webMap.inUse()) {
+                webMap.getWebElement(this).style[key] = typeof value === "number" ? value + "px" : value;
+            }
         },
         __addChildAt: function (child, index) {
             var childParentNode = child.parentNode;
@@ -135,6 +148,10 @@ define(function (require, exports, module) {
         },
         appendChild: function (child) {
             this.__addChildAt(child, this.__children__.length);
+
+            if (webMap.inUse()) {
+                webMap.getWebElement(this).appendChild(webMap.getWebElement(child));
+            }
             return child;
         },
         hasChildNodes: function () {
@@ -148,6 +165,13 @@ define(function (require, exports, module) {
                 return null;
             }
             this.__addChildAt(newNode, index);
+
+            if (webMap.inUse()) {
+                var webElement = webMap.getWebElement(this);
+                var newWebElement = webMap.getWebElement(newNode);
+                var referenceWebElement = webMap.getWebElement(referenceNode);
+                webElement.insertBefore(newWebElement, referenceWebElement);
+            }
             return newNode;
         },
         removeChild: function (child) {
@@ -157,6 +181,12 @@ define(function (require, exports, module) {
                 return null;
             }
             this.__removeChildAt(index);
+
+            if (webMap.inUse()) {
+                var webElement = webMap.getWebElement(this);
+                var childWebElement = webMap.getWebElement(child);
+                webElement.removeChild(childWebElement);
+            }
             return child;
         },
         replaceChild: function (newChild, oldChild) {
@@ -170,6 +200,13 @@ define(function (require, exports, module) {
             }
             this.childNodes.splice(index, 1, newChild);
             oldChild.__parent__ = null;
+
+            if (webMap.inUse()) {
+                var webElement = webMap.getWebElement(this);
+                var newChildWebElement = webMap.getWebElement(newChild);
+                var oldChildWebElement = webMap.getWebElement(oldChild);
+                webElement.replaceChild(newChildWebElement, oldChildWebElement);
+            }
             return oldChild;
         },
         __findChild: function (callback) {
@@ -374,6 +411,13 @@ define(function (require, exports, module) {
                 break;
             default:
                 this[name] = value;
+
+                if (webMap.inUse()) {
+                    var webElement = webMap.getWebElement(this);
+                    if (webElement) { //注册中时可能没有相应webElement但webMap中却已经对其赋属性值
+                        webElement.setAttribute(name, value);
+                    }
+                }
                 break;
             }
         },

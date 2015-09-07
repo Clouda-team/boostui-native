@@ -48,7 +48,7 @@ define(function (require, exports, module) {
             var viewTag;
             var config;
             var methodIdOrName;
-            // 对createView、updateView 等做优化 
+            // 对createView、updateView 等做优化
             if (tag === null) {
                 switch (method) {
                 case "createView":

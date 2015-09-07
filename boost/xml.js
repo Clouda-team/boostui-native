@@ -12,6 +12,7 @@ define(function (require, exports, module) {
     var EventTarget = require("boost/EventTarget");
     var Event = require("boost/Event");
     var nativeGlobal = require("boost/NativeObject").global;
+    var webMap = require("boost/webMap");
 
     function onStateChanged() {
         if (this.readyState == 4) {
@@ -76,6 +77,10 @@ define(function (require, exports, module) {
             if (tagName === "TEXT" || tagName === "TEXTINPUT") {
                 if (element.firstChild !== null) {
                     nativeElement.value = element.firstChild.nodeValue;
+
+                    if (webMap.inUse()) {
+                        webMap.getWebElement(nativeElement).innerText = element.firstChild.nodeValue;
+                    }
                 }
             } else {
                 walkElement(element, nativeElement);

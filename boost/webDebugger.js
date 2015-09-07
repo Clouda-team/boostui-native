@@ -27,6 +27,7 @@ define(function (require, exports, module) {
             document.documentElement.style.visibility = 'hidden';
             webMonitor.start();
         },
+        //TODO: 有些样式没有更新至dom上，比如follow的颜色、测试按钮的背景色
         isActive: function () {
             return this._active;
         }

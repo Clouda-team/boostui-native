@@ -6,7 +6,7 @@ define(function (require, exports, module) {
     var assert = require("base/assert");
     var each = require("base/each");
     var webDebugger = require('./webDebugger');
-    var ID_ATTR_NAME = "_tag";
+    var ID_ATTR_NAME = "__web_map_id";
 
     var WebMap = derive(Object, {
         _boostMap: {},
@@ -46,17 +46,11 @@ define(function (require, exports, module) {
         },
 
         _getId: function (element) {
-            return element.getAttribute(ID_ATTR_NAME);
+            return element[ID_ATTR_NAME];
         },
         _markId: function (element, id, type) {
-            if (type === "web") {
-                webDebugger.doNotUpdateBoostOnce = true;
-                element.setAttribute(ID_ATTR_NAME, id);
-            } else if (type === "boost") {
-                webDebugger.doNotUpdateWeb = true;
-                element.setAttribute(ID_ATTR_NAME, id);
-                webDebugger.doNotUpdateWeb = false;
-            }
+            //为了方便，暂时就直接赋值属性了~（为了不在dom上显示以防用户复制元素时一起复制下来，没有setAttribute）
+            element[ID_ATTR_NAME] = id;
         }
     });
 

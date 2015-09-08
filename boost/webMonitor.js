@@ -88,7 +88,11 @@ define(function (require, exports, module) {
                                     webMap.set(addedBoostNode, addedNode);
                                     //TODO: 使用与上面相同的逻辑来处理
                                     each(addedNode.attributes, function (attr) {
-                                        addedBoostNode[attr.name] = attr.value;
+                                        if (attr.name === 'style') {
+                                            //TODO
+                                        } else {
+                                            addedBoostNode[attr.name] = attr.value;
+                                        }
                                     });
                                     addedBoostNode.value = addedNode.innerHTML;
                                     webDebugger.doNotUpdateWeb = false;

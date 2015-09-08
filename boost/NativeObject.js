@@ -41,6 +41,9 @@ define(function (require, exports, module) {
         }
     });
 
+    //TODO: @ls:
+    // 本方法只在NativeGlobalObject创建时有使用，也就是说，库中只暴露了global上的原生方法、只调用到ReactPageEntity上的方法？
+    // 但使用者可以创建NativeObject后自己调用其bindNative以调用到原生上相应对象的方法是吧？
     NativeObject.bindNative = function (method) {
         return function () {
             this.__callNative(method, slice(arguments));

@@ -76,7 +76,8 @@ define(function (require, exports, module) {
                 "blue": "#ff0000ff",
                 "teal": "#ff008080",
                 "aqua": "#ff00ffff",
-                "orange": "#ffffa500"
+                "orange": "#ffffa500",
+                "transparent": "#00000000"
             };
             var REG_HEX_RGB = /^#([0-9a-f])([0-9a-f])([0-9a-f])$/;
             var REG_HEX_RRGGBB = /^#([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})$/;

@@ -24,6 +24,9 @@ define(function (require, exports, module) {
         "get nativeObject": function () {
             return this.__native__;
         },
+        "get tag": function () {
+            return this.__native__.tag;
+        },
         __createView: function (type, config) {
             var self = this;
             var nativeObj = this.__native__ = new NativeObject();
@@ -95,6 +98,7 @@ define(function (require, exports, module) {
         NativeElement.call(this, null, "NATIVE_ROOT");
     }, {
         __createView: function () {
+            //TODO @ls: 不用调用nativeGlobal.createView吗？只是一个虚拟的root?
             this.__native__ = new NativeObject(ROOT_ELEMENT_TAG);
         }
     });

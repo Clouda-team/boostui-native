@@ -7,6 +7,7 @@ define(function (require, exports, module) {
     var StyleSheet = require("boost/StyleSheet");
 
     //var NATIVE_VIEW_TYPE = "WrappedViewGroup";
+    //TODO: @ls: 与WebNativeMapping.TypeMapping.TYPES中序号对应
     var NATIVE_VIEW_TYPE = 0;
 
     var ViewStyle = derive(StyleSheet, ViewStylePropTypes);

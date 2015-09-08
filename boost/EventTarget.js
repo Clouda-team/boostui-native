@@ -18,6 +18,7 @@ define(function (require, exports, module) {
 
             assert(type(listeners[eventType]) === "array", "__listeners__ is not an array");
 
+            //TODO @ls useCapture将会是什么用？
             //TODO useCapture
             listeners[eventType].push(listener);
             return true;
@@ -32,6 +33,7 @@ define(function (require, exports, module) {
             }
 
             found = false;
+            //TODO @ls useCapture将会是什么用？
             //TODO useCapture
             while ((index = listeners[eventType].indexOf(listener)) > -1) {
                 listeners[eventType].splice(index, 1);
@@ -52,6 +54,7 @@ define(function (require, exports, module) {
                     listener.call(this, event);
                 }, this);
             }
+            //TODO: @ls 下面属性是Event里get方法对应吧？之前版本中直接作为方法来调用、而且还没有这个get方法，又是访问的哪里的？还是会报错？
             return !event.defaultPrevented;
         }
     });

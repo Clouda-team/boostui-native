@@ -9,38 +9,38 @@ define(function (require, exports, module) {
     var _enum = validator.oneOf;
 
     var LayoutPropTypes = StyleSheet.createPropTypes({
-        "width": dp, //
-        "height": dp, //
-        "left": dp, //
-        "right": dp, //
-        "top": dp, //
-        "bottom": dp, //
-        "margin": dp, //
-        "marginLeft": dp, //
-        "marginRight": dp, //
-        "marginTop": dp, //
-        "marginBottom": dp, //
-        "marginHorizontal": dp, //
-        "marginVertical": dp, //
-        "padding": dp, //
-        "paddingLeft": dp, //
-        "paddingRight": dp, //
-        "paddingTop": dp, //
-        "paddingBottom": dp, //
-        "paddingHorizontal": dp, //
-        "paddingVertical": dp, //
-        "borderWidth": dp, //
-        "borderLeftWidth": dp, //
-        "borderRightWidth": dp, //
-        "borderTopWidth": dp, //
-        "borderBottomWidth": dp, //
-        "flexDirection": _enum("row", "column"), //
-        "justifyContent": _enum("flex-start", "flex-end", "center", "space-between", "space-around"), //
-        "alignItems": _enum("flex-start", "flex-end", "center", "stretch"), //
-        "alignSelf": _enum("auto", "flex-start", "flex-end", "center", "stretch"), //
-        "flex": number, //
-        "flexWrap": _enum("wrap", "nowrap"), //
-        "position": _enum("absolute", "relative"), //
+        "width": [dp, "auto"],
+        "height": [dp, "auto"],
+        "left": [dp, "auto"],
+        "right": [dp, "auto"],
+        "top": [dp, "auto"],
+        "bottom": [dp, "auto"],
+        "margin": [dp, 0],
+        "marginLeft": [dp, 0],
+        "marginRight": [dp, 0],
+        "marginTop": [dp, 0],
+        "marginBottom": [dp, 0],
+        "marginHorizontal": [dp, 0],
+        "marginVertical": [dp, 0],
+        "padding": [dp, 0],
+        "paddingLeft": [dp, 0],
+        "paddingRight": [dp, 0],
+        "paddingTop": [dp, 0],
+        "paddingBottom": [dp, 0],
+        "paddingHorizontal": [dp, 0],
+        "paddingVertical": [dp, 0],
+        "borderWidth": [dp, 0],
+        "borderLeftWidth": [dp, 0],
+        "borderRightWidth": [dp, 0],
+        "borderTopWidth": [dp, 0],
+        "borderBottomWidth": [dp, 0],
+        "flexDirection": [_enum("row", "column"), "column"],
+        "justifyContent": [_enum("flex-start", "flex-end", "center", "space-between", "space-around"), "flex-start"],
+        "alignItems": [_enum("flex-start", "flex-end", "center", "stretch"), "stretch"],
+        "alignSelf": [_enum("auto", "flex-start", "flex-end", "center", "stretch"), "auto"],
+        "flex": [number, 1],
+        "flexWrap": [_enum("wrap", "nowrap"), "nowrap"],
+        "position": [_enum("absolute", "relative"), "relative"],
     });
 
     module.exports = LayoutPropTypes;

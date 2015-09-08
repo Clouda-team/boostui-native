@@ -31,6 +31,7 @@ define(function (require, exports, module) {
      * });
      * // 0:1
      * // 1:2
+     * // 2:3
      */
 
     var isFunction = require("base/isFunction");

@@ -13,19 +13,19 @@ define(function (require, exports, module) {
     var _enum = validator.oneOf;
 
     var ViewStylePropTypes = StyleSheet.createPropTypes(LayoutPropTypes, {
-        "backgroundColor": color, //
-        "borderRadius": dp, //
-        "borderTopLeftRadius": dp, //
-        "borderTopRightRadius": dp, //
-        "borderBottomRightRadius": dp, //
-        "borderBottomLeftRadius": dp, //
-        "borderColor": color, //
-        "borderLeftColor": color, //
-        "borderTopColor": color, //
-        "borderRightColor": color, //
-        "borderBottomColor": color, //
-        "opacity": number, //
-        "overflow": _enum('visible', 'hidden'), //
+        "backgroundColor": [color, "transparent"],
+        "borderRadius": [dp, 0],
+        "borderTopLeftRadius": [dp, 0],
+        "borderTopRightRadius": [dp, 0],
+        "borderBottomRightRadius": [dp, 0],
+        "borderBottomLeftRadius": [dp, 0],
+        "borderColor": [color, "black"],
+        "borderLeftColor": [color, "black"],
+        "borderTopColor": [color, "black"],
+        "borderRightColor": [color, "black"],
+        "borderBottomColor": [color, "black"],
+        "opacity": [number, 1],
+        "overflow": [_enum('visible', 'hidden'), 'hidden'],
         //"shadowColor": color, //
         //"shadowOffset": { //
         //    "width": dp,

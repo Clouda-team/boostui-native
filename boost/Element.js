@@ -7,6 +7,8 @@ define(function (require, exports, module) {
     var StyleSheet = require("boost/StyleSheet");
     var trim = require("base/trim");
     var each = require("base/each");
+    var webMap = require("boost/webMap");
+    var webDebugger = require('./webDebugger');
     var push = [].push;
 
     var _super = EventTarget.prototype;
@@ -23,6 +25,11 @@ define(function (require, exports, module) {
     }, {
         "set id": function (value) {
             this.__id__ = value;
+
+            if (webDebugger.isActive() && !webDebugger.doNotUpdateWeb) {
+                webDebugger.doNotUpdateBoostOnce = true;
+                webMap.getWebElement(this).id = value;
+            }
         },
         "get id": function () {
             return this.__id__;
@@ -41,6 +48,11 @@ define(function (require, exports, module) {
                 }
             }
             this.__classList__ = classList;
+
+            if (webDebugger.isActive() && !webDebugger.doNotUpdateWeb) {
+                webDebugger.doNotUpdateBoostOnce = true;
+                webMap.getWebElement(this).className = value;
+            }
         },
         "get className": function () {
             return this.__className__;
@@ -119,6 +131,20 @@ define(function (require, exports, module) {
         },
         __styleChange: function (key, value, origValue) {
             // do nothing
+
+            if (webDebugger.isActive() && !webDebugger.doNotUpdateWeb) {
+                var webValue;
+                if (value === "UNDEFINED") {
+                    webValue = "auto";
+                } else if (typeof value === "number") {
+                    webValue = value / window.devicePixelRatio + "px"; //TODO: dump with dp
+                } else {
+                    webValue = value;
+                }
+
+                webDebugger.doNotUpdateBoostOnce = true;
+                webMap.getWebElement(this).style[key] = webValue;
+            }
         },
         __addChildAt: function (child, index) {
             var childParentNode = child.parentNode;
@@ -135,6 +161,13 @@ define(function (require, exports, module) {
         },
         appendChild: function (child) {
             this.__addChildAt(child, this.__children__.length);
+
+            if (webDebugger.isActive() && !webDebugger.doNotUpdateWeb) {
+                var webElement = webMap.getWebElement(this);
+                var webChild = webMap.getWebElement(child);
+                webDebugger.doNotUpdateBoostOnce = true;
+                webElement.appendChild(webChild);
+            }
             return child;
         },
         hasChildNodes: function () {
@@ -148,6 +181,14 @@ define(function (require, exports, module) {
                 return null;
             }
             this.__addChildAt(newNode, index);
+
+            if (webDebugger.isActive() && !webDebugger.doNotUpdateWeb) {
+                var webElement = webMap.getWebElement(this);
+                var newWebElement = webMap.getWebElement(newNode);
+                var referenceWebElement = webMap.getWebElement(referenceNode);
+                webDebugger.doNotUpdateBoostOnce = true;
+                webElement.insertBefore(newWebElement, referenceWebElement);
+            }
             return newNode;
         },
         removeChild: function (child) {
@@ -157,6 +198,13 @@ define(function (require, exports, module) {
                 return null;
             }
             this.__removeChildAt(index);
+
+            if (webDebugger.isActive() && !webDebugger.doNotUpdateWeb) {
+                var webElement = webMap.getWebElement(this);
+                var childWebElement = webMap.getWebElement(child);
+                webDebugger.doNotUpdateBoostOnce = true;
+                webElement.removeChild(childWebElement);
+            }
             return child;
         },
         replaceChild: function (newChild, oldChild) {
@@ -170,6 +218,14 @@ define(function (require, exports, module) {
             }
             this.childNodes.splice(index, 1, newChild);
             oldChild.__parent__ = null;
+
+            if (webDebugger.isActive() && !webDebugger.doNotUpdateWeb) {
+                var webElement = webMap.getWebElement(this);
+                var newChildWebElement = webMap.getWebElement(newChild);
+                var oldChildWebElement = webMap.getWebElement(oldChild);
+                webDebugger.doNotUpdateBoostOnce = true;
+                webElement.replaceChild(newChildWebElement, oldChildWebElement);
+            }
             return oldChild;
         },
         __findChild: function (callback) {
@@ -240,6 +296,7 @@ define(function (require, exports, module) {
         },
         __parentSelect: function (selector) {
             var results = null;
+            selector = trim(selector);
             var match = rquickExpr.exec(selector);
             var m;
 
@@ -372,6 +429,12 @@ define(function (require, exports, module) {
                 break;
             default:
                 this[name] = value;
+
+                if (webDebugger.isActive() && !webDebugger.doNotUpdateWeb) {
+                    var webElement = webMap.getWebElement(this);
+                    webDebugger.doNotUpdateBoostOnce = true;
+                    webElement.setAttribute(name, value);
+                }
                 break;
             }
         },

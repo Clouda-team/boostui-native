@@ -13,6 +13,8 @@ define(function (require, exports, module) {
     var Image = require("boost/Image");
     var ScrollView = require("boost/ScrollView");
     var Slider = require("boost/Slider");
+    var webMap = require("boost/webMap");
+    var webDebugger = require('./webDebugger');
 
     var ROOT_ELEMENT_TAG = "tag_nativeview";
     var TAG_MAP = {
@@ -34,13 +36,24 @@ define(function (require, exports, module) {
         "get documentElement": function () {
             if (this.__docuemntElement__ === null) {
                 this.__docuemntElement__ = NativeElement.__rootElement;
+
+                if (webDebugger.isActive()) {
+                    webMap.set(this.__docuemntElement__, document.documentElement);
+                }
             }
             return this.__docuemntElement__;
         },
         createElement: function (tagName) {
             tagName = tagName.toUpperCase();
             assert(hasOwnProperty(this.__tagMap__, tagName), "unknow tag \"" + tagName + "\"");
-            return new this.__tagMap__[tagName]();
+            var element = new this.__tagMap__[tagName]();
+
+            if (webDebugger.isActive() && !webDebugger.doNotUpdateWeb) {
+                var webElement = document.createElement(tagName);
+                webMap.set(element, webElement);
+            }
+
+            return element;
         },
         registerElement: function (tagName, options) {
             var constructor;

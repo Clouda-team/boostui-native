@@ -11,6 +11,7 @@ define(function (require, exports, module) {
     var assert = require("base/assert");
     var EventTarget = require("boost/EventTarget");
     var PropertyChangeEvent = require("boost/PropertyChangeEvent");
+    var validator = require("boost/validator");
 
 
     var StyleSheet = derive(EventTarget, function () {
@@ -69,21 +70,25 @@ define(function (require, exports, module) {
         config = arguments[index];
 
         each(config, function (array, key) {
-            var validator = array[0];
+            var curValidator = array[0];
             var defaultValue = array[1];
 
             //为了性能，直接从 __styleProps__ 获取值
-            //proto["get " + key] = function () {
-            //    return hasOwnProperty(this.__styleProps__, key) ?
-            //        this.__styleProps__[key] : "";
-            //};
+            //TODO: 这种方式ok么？
+            proto["get " + key] = function () {
+                var value = hasOwnProperty(this.__styleProps__, key) ? this.__styleProps__[key] : "";
+                if (curValidator === validator.dp && value) {
+                    return value / window.devicePixelRatio; //TODO: dump with dp validator
+                }
+                return value;
+            };
 
             proto["set " + key] = function (value) {
                 var origValue = this.__styleProps__[key];
                 var event;
-                
+
                 if (value !== null) {
-                    value = validator(value);
+                    value = curValidator(value);
                 } else {
                     //清除样式
                     value = defaultValue;

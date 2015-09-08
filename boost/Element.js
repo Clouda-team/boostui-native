@@ -137,7 +137,7 @@ define(function (require, exports, module) {
                 if (value === "UNDEFINED") {
                     webValue = "auto";
                 } else if (typeof value === "number") {
-                    webValue = value / window.devicePixelRatio + "px"; //TODO: 与dp中有强耦合~
+                    webValue = value / window.devicePixelRatio + "px"; //TODO: dump with dp
                 } else {
                     webValue = value;
                 }
@@ -371,7 +371,6 @@ define(function (require, exports, module) {
                         var node = element;
                         while (index--) {
                             // 没有找到符合条件的父节点，就过滤掉
-                            // TODO @ls: 目前这种实现不就是每次以当前节点为根向上寻找，下面的fixme是想改成什么样呢？还是已经失效了？
                             // FIXME 以当前节点作为根节点
                             node = node.__parentSelect(items[index]);
                             if (node === null) {

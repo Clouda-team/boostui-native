@@ -8,14 +8,13 @@ define(function (require, exports, module) {
     var dp = validator.dp;
     var _enum = validator.oneOf;
 
-    var UNDEFINED = "UNDEFINED";
     var LayoutPropTypes = StyleSheet.createPropTypes({
-        "width": [dp, UNDEFINED],
-        "height": [dp, UNDEFINED],
-        "left": [dp, UNDEFINED],
-        "right": [dp, UNDEFINED],
-        "top": [dp, UNDEFINED],
-        "bottom": [dp, UNDEFINED],
+        "width": [dp, "auto"],
+        "height": [dp, "auto"],
+        "left": [dp, "auto"],
+        "right": [dp, "auto"],
+        "top": [dp, "auto"],
+        "bottom": [dp, "auto"],
         "margin": [dp, 0],
         "marginLeft": [dp, 0],
         "marginRight": [dp, 0],

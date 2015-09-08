@@ -98,7 +98,6 @@ define(function (require, exports, module) {
         NativeElement.call(this, null, "NATIVE_ROOT");
     }, {
         __createView: function () {
-            //TODO @ls: 不用调用nativeGlobal.createView吗？只是一个虚拟的root?
             this.__native__ = new NativeObject(ROOT_ELEMENT_TAG);
         }
     });
